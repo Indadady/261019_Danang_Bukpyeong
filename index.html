@@ -127,6 +127,7 @@
                     <a href="#home" class="px-3 py-2 font-bold text-slate-600 hover:text-tm rounded-lg">홈</a>
                     <a href="#highlights" class="px-3 py-2 font-bold text-tm rounded-lg">핵심포인트</a>
                     <a href="#flight" class="px-3 py-2 font-medium text-slate-600 hover:text-tm rounded-lg">항공</a>
+                    <a href="#pai" class="px-3 py-2 font-bold text-amber-700 hover:text-amber-900 rounded-lg">입국신고</a>
                     <a href="#map-section" class="px-3 py-2 font-medium text-slate-600 hover:text-tm rounded-lg">동선</a>
                     <a href="#schedule" class="px-3 py-2 font-bold text-tm rounded-lg">상세일정</a>
                     <a href="#hotel" class="px-3 py-2 font-medium text-slate-600 hover:text-tm rounded-lg">호텔</a>
@@ -407,6 +408,94 @@
                         </div>
                     </div>
                     <p class="mt-4 text-center text-xs text-slate-500">※ 항공 스케줄은 안내 초안이며, 항공사 사정에 따라 변경될 수 있습니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pai" class="py-16 bg-white border-t border-slate-200">
+            <div class="container mx-auto px-4 max-w-5xl">
+                <div class="text-center mb-10">
+                    <span class="text-amber-600 font-black tracking-widest text-xs uppercase"><i class="fa-solid fa-passport"></i> VIETNAM ENTRY · PAI</span>
+                    <h2 class="text-3xl font-bold text-slate-800 mt-2">온라인 사전입국신고 (PAI)</h2>
+                    <p class="text-sm text-slate-500 mt-2">다낭 입국 시 <strong>외국인 전원 필수</strong>입니다. 공식 사이트에서 무료로 작성하고, 발급된 QR코드를 입국심사 때 여권과 함께 제시합니다.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-amber-50 border border-amber-200 rounded-3xl p-6">
+                        <h3 class="font-bold text-amber-900 mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-exclamation"></i> 작성 전 꼭 확인하세요</h3>
+                        <ul class="text-sm text-slate-700 space-y-2 leading-relaxed">
+                            <li>• <strong>작성 가능 시점:</strong> 다낭 도착 <strong>72시간(3일) 전</strong>부터입니다. 너무 일찍 열면 접수가 안 됩니다. <span class="text-amber-800 font-bold">10월 16일(금) 밤 ~ 출국 전까지</span> 한국에서 미리 작성하세요.</li>
+                            <li>• <strong>1인 1장:</strong> 학생·선생님 모두 각자 QR코드가 필요합니다. 학생은 보호자가 여권 원본을 보고 대신 작성하면 됩니다.</li>
+                            <li>• <strong>비자가 아닙니다.</strong> 한국인은 45일 무비자(면제)로 입국하며, PAI는 그와 별도로 제출하는 사전 입국 정보입니다. 수수료는 <strong>없습니다</strong>.</li>
+                            <li>• <strong>가짜 사이트 주의:</strong> 구글 검색 광고·유료 대행 페이지를 피하고, 주소가 <strong>prearrival.immigration.gov.vn</strong> 인지 반드시 확인하세요.</li>
+                            <li>• 제출 후 <strong>QR코드를 캡처·PDF 저장</strong>해 두세요. 다낭 공항 와이파이에 의존하지 마세요.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                            <h3 class="font-bold text-slate-800 text-lg">📋 신고서에 넣을 정보 <span class="text-sm font-medium text-slate-500">(복사·메모용)</span></h3>
+                            <button type="button" onclick="copyPai(PAI_MEMO, this)" class="shrink-0 bg-tm hover:bg-tm-dark text-white text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-regular fa-copy mr-1"></i>전체 복사</button>
+                        </div>
+                        <div class="grid sm:grid-cols-2 gap-4 text-sm">
+                            <div class="bg-white rounded-2xl border border-slate-100 p-4">
+                                <p class="text-xs font-bold text-slate-400 mb-2">비자 · 체류 목적</p>
+                                <p>비자 종류: <strong>Visa Exemption (비자면제)</strong></p>
+                                <p>여행 목적: <strong>Tourism (관광)</strong></p>
+                                <p>국적: <strong>Korea (Republic of)</strong></p>
+                            </div>
+                            <div class="bg-white rounded-2xl border border-slate-100 p-4">
+                                <p class="text-xs font-bold text-slate-400 mb-2">입국 항공편</p>
+                                <p>편명: <strong>KE459</strong></p>
+                                <p>입국일: <strong>2026-10-19</strong></p>
+                                <p>공항: <strong>Da Nang International Airport</strong></p>
+                                <p>출발지: <strong>Incheon</strong></p>
+                            </div>
+                            <div class="bg-white rounded-2xl border border-slate-100 p-4">
+                                <p class="text-xs font-bold text-slate-400 mb-2">베트남 출국편</p>
+                                <p>편명: <strong>KE460</strong></p>
+                                <p>출국일: <strong>2026-10-22</strong></p>
+                                <p class="text-xs text-amber-700 mt-2 font-medium">※ 다낭 22:55 출발 → 인천 10.23 05:30 도착입니다. 신고서의 출국일은 <strong>10월 22일</strong>로 입력하세요.</p>
+                            </div>
+                            <div class="bg-white rounded-2xl border border-slate-100 p-4">
+                                <p class="text-xs font-bold text-slate-400 mb-2">예정 숙소 (영문)</p>
+                                <p class="font-bold text-slate-800">MUONG THANH LUXURY DA NANG HOTEL</p>
+                                <p class="text-slate-600 mt-1 leading-relaxed">270 Vo Nguyen Giap Street, Ngu Hanh Son Ward, Da Nang City, Vietnam</p>
+                                <p class="mt-2">숙박 유형: <strong>Hotel</strong> · 도시: <strong>Da Nang</strong></p>
+                                <p class="text-xs text-slate-400 mt-2">※ 예정 숙소입니다. 동급 변경 시 영문 주소를 다시 안내합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 md:p-8">
+                        <h3 class="font-bold text-slate-800 text-lg mb-6">📱 작성 순서 (초보자용)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100 relative">
+                                <div class="absolute -top-3 left-4 bg-tm text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-md">1</div>
+                                <h4 class="font-bold text-slate-800 text-sm mt-2">공식 사이트 접속</h4>
+                                <p class="text-xs text-slate-600 mt-2 leading-relaxed">우측 상단 언어를 <strong>한국어</strong>로 바꾼 뒤 「도착 전 정보 작성 및 제출」을 누릅니다.</p>
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100 relative">
+                                <div class="absolute -top-3 left-4 bg-tm text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-md">2</div>
+                                <h4 class="font-bold text-slate-800 text-sm mt-2">여권·연락처 입력</h4>
+                                <p class="text-xs text-slate-600 mt-2 leading-relaxed">여권 사진면과 <strong>글자 하나까지 동일</strong>하게 입력합니다. 숫자 0과 알파벳 O를 구별하세요. 이메일은 QR 수신용입니다.</p>
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100 relative">
+                                <div class="absolute -top-3 left-4 bg-tm text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-md">3</div>
+                                <h4 class="font-bold text-slate-800 text-sm mt-2">비자·항공·숙소</h4>
+                                <p class="text-xs text-slate-600 mt-2 leading-relaxed">위 「복사·메모용」대로 입력합니다. 국경 검문소는 <strong>Da Nang International Airport</strong> 입니다.</p>
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100 relative">
+                                <div class="absolute -top-3 left-4 bg-tm text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-md">4</div>
+                                <h4 class="font-bold text-slate-800 text-sm mt-2">QR 저장 · 입국</h4>
+                                <p class="text-xs text-slate-600 mt-2 leading-relaxed">QR을 사진첩·PDF로 저장하고, 다낭 입국심사 때 <strong>여권과 함께</strong> 제시합니다. 단체는 가이드·선생님 안내에 따릅니다.</p>
+                            </div>
+                        </div>
+                        <a href="https://prearrival.immigration.gov.vn/" target="_blank" rel="noopener noreferrer" class="mt-6 flex items-center justify-center gap-2 w-full bg-tm hover:bg-tm-dark text-white font-bold py-3.5 rounded-xl shadow-md transition-colors">
+                            <i class="fa-solid fa-up-right-from-square"></i> 베트남 이민국 공식 사전입국신고 사이트 열기
+                        </a>
+                        <p class="text-center text-xs text-slate-400 mt-3 font-medium">https://prearrival.immigration.gov.vn/</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1038,6 +1127,30 @@
 
         function showToast(m){const t=document.getElementById('toast');document.getElementById('toast-msg').innerText=m;t.classList.remove('translate-y-20','opacity-0');setTimeout(()=>t.classList.add('translate-y-20','opacity-0'),3000);}
 
+        const PAI_MEMO = `비자: Visa Exemption (비자면제)
+여행목적: Tourism (관광)
+국적: Korea (Republic of)
+입국편명: KE459
+입국일: 2026-10-19
+입국공항: Da Nang International Airport
+출발지: Incheon
+출국편명: KE460
+베트남 출국일: 2026-10-22
+호텔: MUONG THANH LUXURY DA NANG HOTEL
+숙소주소: 270 Vo Nguyen Giap Street, Ngu Hanh Son Ward, Da Nang City, Vietnam
+숙박유형: Hotel
+도시: Da Nang`;
+        function copyPai(text, btn){
+            const t = text || PAI_MEMO;
+            navigator.clipboard.writeText(t).then(() => {
+                showToast('복사되었습니다');
+                if (!btn) return;
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> 복사됨';
+                setTimeout(() => { btn.innerHTML = orig; }, 1600);
+            }).catch(() => alert('복사에 실패했습니다. 아래 내용을 직접 선택해 복사해 주세요.'));
+        }
+
         function updateDday(){
             const start = new Date('2026-10-19T00:00:00'), end = new Date('2026-10-23T23:59:59'), today = new Date(); today.setHours(0,0,0,0);
             const diff = Math.ceil((start-today)/86400000), badge = document.getElementById('d-day-badge'), hero = document.getElementById('hero-date');
@@ -1287,7 +1400,8 @@
             '개인 상비약 (멀미약, 지사제, 방수밴드)',
             '썬크림 및 모자 (강한 자외선)',
             '보조배터리 (사진 촬영이 많습니다)',
-            '개인 용돈 (달러 또는 동 환전)'
+            '개인 용돈 (달러 또는 동 환전)',
+            '베트남 사전입국신고(PAI) 작성 및 QR코드 저장 (도착 72시간 전~)'
         ];
         function renderChecklist() {
             const c = document.getElementById('checklist-container'), saved = JSON.parse(localStorage.getItem(C_KEY) || '{}');
