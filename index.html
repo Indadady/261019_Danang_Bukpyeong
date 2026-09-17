@@ -41,8 +41,12 @@
         }
         @media(max-width:768px) { .hero-bg { background-attachment: scroll; } }
 
+        #map-wrap { position: relative; }
         #map { height: 360px; width: 100%; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1); z-index: 10; }
         @media(min-width:1024px) { #map { height: 500px; } }
+        #map-leg { position: absolute; top: 12px; left: 12px; z-index: 500; display: none; background: rgba(255,255,255,.94); border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 800; color: var(--tm); box-shadow: 0 4px 12px rgba(15,23,42,.12); pointer-events: none; max-width: calc(100% - 24px); }
+        .traveler-icon { background: none !important; border: none !important; }
+        .map-vehicle { font-size: 28px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(15,23,42,.35)); }
         .map-marker-bubble { background: #fff; border-radius: 50%; box-shadow: 0 4px 6px rgba(0,0,0,.3); border: 2px solid #fff; display: flex; align-items: center; justify-content: center; opacity: 0; }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         .leaflet-tooltip { font-family: 'Noto Sans KR', sans-serif !important; font-weight: 700 !important; color: #1e293b !important; border-radius: 8px !important; border: none !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important; padding: 4px 10px !important; }
@@ -64,53 +68,75 @@
 
         @media screen { #print-area { display: none !important; } }
         @media print {
-            @page { size: A4 portrait; margin: 12mm 15mm; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            html, body { background: #fff !important; color: #000 !important; height: auto !important; overflow: visible !important; font-family: 'Noto Sans KR', sans-serif; }
-            header, footer, section:not(#print-area), .no-print, #toast, #custom-confirm, #phrase-modal { display: none !important; }
-            main, body { padding: 0 !important; margin: 0 !important; width: 100% !important; background: #fff !important; }
+            @page { size: A4 portrait; margin: 12mm 10mm; }
+            body { background-color: #ffffff !important; color: #1e293b !important; }
+            a[href]:after { content: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; font-family: 'Noto Sans KR', sans-serif; }
+            .print-hidden, header, footer, main, .no-print, #event-day-bar, #toast, #custom-confirm, #phrase-modal { display: none !important; }
+            html, body { height: auto !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
 
-            #print-area { display: block !important; width: 100%; box-sizing: border-box; page-break-after: avoid; page-break-inside: avoid; }
-            .print-header-top { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--tm); padding-bottom: 6px; margin-bottom: 12px; }
-            .print-header-top img { height: 26px; }
-            .print-doc-no { font-size: 9px; color: #555; font-weight: bold; }
+            #print-area { display: block !important; width: 100%; box-sizing: border-box; color: #1e293b; }
+            .print-page-2 { page-break-before: always; break-before: page; }
 
-            .print-title { text-align: center; font-size: 20px; font-weight: 900; color: var(--tm); margin-bottom: 4px; line-height: 1.4; letter-spacing: -0.03em; }
-            .print-subtitle { text-align: center; font-size: 10px; color: #475569; margin: 0 0 10px 0; font-weight: 500; }
+            .print-header-top { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--tm); padding-bottom: 10px; margin-bottom: 14px; }
+            .print-header-top img { height: 36px; object-fit: contain; }
+            .print-doc-no { font-size: 11px; color: #475569; font-weight: 500; }
 
-            .print-overview { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; background: #f8fafc !important; border: 1px solid #cbd5e1 !important; border-radius: 4px; padding: 10px 14px; margin-bottom: 12px; font-size: 10.5px; }
-            .print-overview .label { font-weight: 800; color: var(--tm); margin-right: 4px; }
+            .print-title { text-align: center; font-size: 20px; font-weight: 700; color: #0f172a; margin: 0 0 6px 0; letter-spacing: -0.5px; }
+            .print-subtitle { text-align: center; font-size: 11px; color: #475569; margin: 0 0 12px 0; font-weight: 500; }
 
-            .tm-table { width: 100%; border-collapse: collapse; font-size: 10px; table-layout: fixed; border: 1.5px solid #1e293b !important; }
-            .tm-table th { border: 1px solid #1e293b !important; background: #f1f5f9 !important; font-weight: bold; text-align: center; padding: 6px 4px !important; font-size: 10.5px; color: var(--tm); }
-            .tm-table td { border: 1px solid #1e293b !important; padding: 8px 10px !important; vertical-align: top; word-break: keep-all; line-height: 1.45; font-size: 10px; }
+            .print-overview { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; background: #f8fafc !important; border: 1px solid #94a3b8 !important; border-radius: 6px; padding: 10px 16px; margin-bottom: 14px; font-size: 12px; }
+            .print-overview div { display: flex; gap: 6px; }
+            .print-overview .label { font-weight: 700; color: var(--tm); }
+
+            .tm-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 10.5px; table-layout: fixed; border: 2px solid #1e293b !important; }
+            .tm-table th { border: 1px solid #1e293b !important; background: #f8fafc !important; color: #1e293b; font-weight: 700; text-align: center; padding: 7px 6px !important; font-size: 11.5px; }
+            .tm-table td { border: 1px solid #1e293b !important; padding: 8px 10px !important; vertical-align: top; word-break: keep-all; line-height: 1.45; }
             .tm-table tbody tr { page-break-inside: avoid; break-inside: avoid; }
 
-            .tm-col-date { width: 11%; text-align: center; font-weight: 700; background: #f8fafc !important; vertical-align: middle; line-height: 1.5; }
-            .tm-col-desc { width: 75%; }
-            .tm-col-meal { width: 14%; text-align: center; vertical-align: middle; }
+            .tm-col-date { width: 14%; text-align: center; font-weight: 700; background: #f8fafc !important; vertical-align: middle; line-height: 1.5; }
+            .tm-col-desc { width: 70%; }
+            .tm-col-meal { width: 16%; text-align: center; vertical-align: middle; }
 
-            .tm-day-divider td { border-top: 1.5px solid #1e293b !important; }
-            .tm-time-flow { font-size: 10px !important; margin-bottom: 5px !important; font-weight: bold; }
-            .tm-time-tag { color: var(--tm); margin-right: 4px; }
-            .tm-highlight { font-weight: 700; color: var(--tm); }
+            .tm-day-divider td { border-top: 2px solid var(--tm) !important; }
+            .tm-time-flow { margin-bottom: 6px; font-weight: 500; }
+            .tm-time-tag { display: inline-block; color: var(--tm); font-weight: 700; margin-right: 5px; }
+            .tm-highlight { font-weight: 700; color: #0f172a; }
 
-            .tm-desc-list { list-style: none; margin: 4px 0 !important; padding-left: 2px; }
-            .tm-desc-list li { position: relative; padding-left: 10px; margin-bottom: 4px !important; }
-            .tm-desc-list li::before { content: '■'; font-size: 7px; position: absolute; left: 0; top: 3.5px; color: var(--tm); }
+            .tm-desc-list { list-style: none; margin: 6px 0; padding-left: 5px; }
+            .tm-desc-list li { position: relative; padding-left: 14px; margin-bottom: 5px; line-height: 1.55; }
+            .tm-desc-list li::before { content: '■'; font-size: 8px; position: absolute; left: 0; top: 5px; color: var(--tm); }
 
-            .tm-hotel-divider { border: 0; border-top: 1px dashed #94a3b8; margin: 6px 0 4px 0; }
-            .tm-hotel-info { font-size: 9px !important; font-weight: bold; color: #334155; }
+            .tm-hotel-divider { border: 0; border-top: 1px dashed #94a3b8; margin: 10px 0 8px 0; }
+            .tm-hotel-info { font-size: 12px; color: #0f172a; font-weight: 700; }
+            .tm-hotel-info i { color: var(--tm); margin-right: 6px; }
 
-            .tm-meal-wrapper { display: flex; flex-direction: column; gap: 5px; text-align: left; padding-left: 2px; }
-            .tm-meal-simple { display: flex; align-items: flex-start; font-size: 9.5px !important; line-height: 1.4; }
-            .tm-meal-simple strong { color: var(--tm); margin-right: 4px; width: 14px; flex-shrink: 0; }
+            .tm-meal-wrapper { display: flex; flex-direction: column; gap: 10px; justify-content: center; height: 100%; text-align: left; padding-left: 4px; }
+            .tm-meal-simple { display: flex; align-items: flex-start; font-size: 12px; color: #1e293b; line-height: 1.4; }
+            .tm-meal-simple strong { color: var(--tm); margin-right: 4px; width: 22px; flex-shrink: 0; }
+            .tm-meal-menu { display: flex; flex-direction: column; }
+            .tm-meal-sub { font-size: 11px; margin-top: 2px; color: #475569; }
 
-            .print-contacts { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 20px; padding: 8px 10px; background: #f8fafc !important; border: 1px solid #cbd5e1 !important; border-radius: 4px; font-size: 10px; margin-top: 10px; margin-bottom: 8px; }
+            .print-remarks { font-size: 11px; color: #64748b; text-align: right; font-weight: 500; margin-bottom: 12px; }
+            .print-footer-box { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding-top: 12px; border-top: 1px solid #e2e8f0; }
+            .print-brand-link { font-size: 11px; color: #6c757d; text-decoration: none; }
+            .print-manager { text-align: right; border-left: 3px solid var(--tm); padding-left: 12px; }
+            .print-manager .names { color: #0f172a; font-weight: 700; font-size: 13px; }
+
+            .print-contacts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; padding: 8px 10px; background: #f8fafc !important; border: 1px solid #94a3b8 !important; border-radius: 4px; font-size: 10.5px; margin: 10px 0 6px; }
             .print-contacts .pc-role { font-weight: 700; color: var(--tm); margin-right: 4px; }
 
-            .print-credit { margin-top: 10px; padding-top: 8px; border-top: 1px solid #cbd5e1; text-align: center; }
-            .print-credit-text { font-size: 9px; color: #475569; font-weight: 500; }
+            .print-checklist { border: 1.5px solid #1e293b; border-radius: 6px; padding: 12px 14px; background: #fff !important; margin-bottom: 10px; }
+            .print-checklist h2 { font-size: 13px; font-weight: 800; color: var(--tm); margin: 0 0 8px 0; }
+            .print-checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; font-size: 11px; font-weight: 600; }
+            .print-check-item { display: flex; align-items: flex-start; gap: 7px; line-height: 1.35; }
+            .print-check-box { width: 12px; height: 12px; border: 1.5px solid var(--tm); border-radius: 2px; flex-shrink: 0; margin-top: 1.5px; }
+            .print-note-list { font-size: 11px; color: #475569; line-height: 1.5; margin: 0 0 10px 0; padding-left: 16px; }
+            .print-qr-box { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1.5px solid #1e293b; border-radius: 6px; background: #f8fafc !important; margin-bottom: 10px; }
+            .print-qr-box img { width: 110px; height: 110px; border: 1px solid #1e293b; background: #fff; flex-shrink: 0; }
+            .print-qr-box .qr-copy { font-size: 12px; line-height: 1.45; font-weight: 600; }
+            .print-qr-box .qr-copy strong { color: var(--tm); font-size: 13px; display: block; margin-bottom: 4px; }
+            .print-qr-box .qr-url { color: #475569; font-size: 10.5px; word-break: break-all; font-weight: 500; }
         }
     </style>
 </head>
@@ -142,143 +168,15 @@
                 <button onclick="shareLink()" class="p-2 text-slate-500 hover:text-tm" title="공유"><i class="fa-solid fa-share-nodes text-xl"></i></button>
             </div>
         </nav>
+            <div id="event-day-bar" class="hidden bg-tm text-white">
+                <div class="container mx-auto px-4 py-2 flex items-center justify-center gap-2">
+                    <button type="button" onclick="goToTodaySchedule()" class="inline-flex items-center gap-2 bg-white text-tm font-extrabold text-sm px-4 py-2 rounded-full shadow-sm">오늘의 일정</button>
+                    <button type="button" onclick="goToTodayRoute()" class="inline-flex items-center gap-2 bg-white/15 border border-white/40 text-white font-extrabold text-sm px-4 py-2 rounded-full">당일 동선</button>
+                </div>
+            </div>
     </header>
 
     <main>
-        <div id="print-area">
-            <div class="print-header-top">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker">
-                <div class="print-doc-no">문서번호: TM-261019-BUKPYEONG</div>
-            </div>
-            <div class="print-title">북평초등학교 다낭/호이안 3박 5일 일정표</div>
-            <p class="print-subtitle">※ 본 일정표는 안내 초안이며, 항공·현지 기상 및 교통 상황에 따라 유연하게 진행됩니다.</p>
-
-            <div class="print-overview">
-                <div><span class="label">단체</span> 북평초등학교</div>
-                <div><span class="label">일정</span> 2026.10.19(월) ~ 10.23(금)</div>
-                <div><span class="label">인원</span> 학생 14명 + 인솔교사 4명 (총 18명)</div>
-                <div><span class="label">항공</span> 대한항공 KE459 / KE460</div>
-                <div><span class="label">호텔</span> 무엉탄 럭셔리 또는 동급 준5성급</div>
-            </div>
-
-            <table class="tm-table">
-                <thead><tr><th class="tm-col-date">일자/지역</th><th class="tm-col-desc">상세 일정 및 관광지</th><th class="tm-col-meal">식사/숙박</th></tr></thead>
-                <tbody>
-                    <tr class="tm-day-divider">
-                        <td class="tm-col-date">1일차<br><span class="text-[9px] text-slate-500 font-normal">10/19(월)</span><br><br>인천<br>다낭</td>
-                        <td class="tm-col-desc">
-                            <div class="tm-time-flow"><span class="tm-time-tag">저녁</span> 인천 출발 → 다낭 도착</div>
-                            <ul class="tm-desc-list">
-                                <li>인천국제공항 <strong>제2터미널</strong> 집결 (15:20 목표)</li>
-                                <li><strong>[18:20]</strong> 대한항공(KE459) 인천 출발</li>
-                                <li><strong>[21:05]</strong> 다낭 국제공항 도착, 입국수속 및 가이드 미팅</li>
-                                <li>전용차량 탑승 후 호텔 투숙 및 휴식</li>
-                            </ul>
-                            <hr class="tm-hotel-divider"><div class="tm-hotel-info">🏨 무엉탄 럭셔리(Muong Thanh Luxury) 또는 동급 준5성급</div>
-                        </td>
-                        <td class="tm-col-meal">
-                            <div class="tm-meal-wrapper">
-                                <div class="tm-meal-simple"><strong>조</strong> 불포함</div>
-                                <div class="tm-meal-simple"><strong>중</strong> 불포함</div>
-                                <div class="tm-meal-simple"><strong>석</strong> 기내식</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="tm-day-divider">
-                        <td class="tm-col-date">2일차<br><span class="text-[9px] text-slate-500 font-normal">10/20(화)</span><br><br>다낭</td>
-                        <td class="tm-col-desc">
-                            <div class="tm-time-flow"><span class="tm-time-tag">전일</span> 다낭 시내 · 미케 · 박물관 · 야경</div>
-                            <ul class="tm-desc-list">
-                                <li>세계 6대 해변으로 꼽히는 <strong>미케비치</strong> (음료)</li>
-                                <li>다낭의 역사·전쟁·문화를 담은 <strong>다낭박물관</strong></li>
-                                <li><strong>사랑의 부두</strong> · 1923년 프랑스 건축 <strong>다낭성당</strong></li>
-                                <li>베트남 최대 규모 3D 트릭아트 <strong>아트 인 파라다이스</strong></li>
-                                <li><strong>다낭타워</strong> 석식(스테이크) · <span class="tm-highlight">한강 야경 유람선</span></li>
-                            </ul>
-                            <hr class="tm-hotel-divider"><div class="tm-hotel-info">🏨 상동 (동일 호텔 연박)</div>
-                        </td>
-                        <td class="tm-col-meal">
-                            <div class="tm-meal-wrapper">
-                                <div class="tm-meal-simple"><strong>조</strong> 호텔식</div>
-                                <div class="tm-meal-simple"><strong>중</strong> 마담란</div>
-                                <div class="tm-meal-simple"><strong>석</strong> <span class="tm-highlight">다낭타워 스테이크</span></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="tm-day-divider">
-                        <td class="tm-col-date">3일차<br><span class="text-[9px] text-slate-500 font-normal">10/21(수)</span><br><br>다낭<br>호이안</td>
-                        <td class="tm-col-desc">
-                            <div class="tm-time-flow"><span class="tm-time-tag">전일</span> 오행산 · 호이안 올드타운 · 야경</div>
-                            <ul class="tm-desc-list">
-                                <li><strong>오행산(마블마운틴)</strong> — 편도 엘리베이터</li>
-                                <li>호이안 이동 (약 50분) · SNS 인기 <strong>바구니배(틴퉁)</strong></li>
-                                <li>유네스코 <strong>호이안 구시가지</strong> — 내원교, 풍흥의집, 떤키의집, 관운장 사당</li>
-                                <li>투본강 보트 (도자기마을)</li>
-                                <li class="tm-highlight">호이안 야경 씨클로</li>
-                                <li>다낭 귀환 (약 50분)</li>
-                            </ul>
-                            <hr class="tm-hotel-divider"><div class="tm-hotel-info">🏨 상동 (동일 호텔 연박)</div>
-                        </td>
-                        <td class="tm-col-meal">
-                            <div class="tm-meal-wrapper">
-                                <div class="tm-meal-simple"><strong>조</strong> 호텔식</div>
-                                <div class="tm-meal-simple"><strong>중</strong> 궁식당 소불고기</div>
-                                <div class="tm-meal-simple"><strong>석</strong> <span class="tm-highlight">모닝글로리</span></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="tm-day-divider">
-                        <td class="tm-col-date">4일차<br><span class="text-[9px] text-slate-500 font-normal">10/22(목)</span><br><br>바나힐<br>다낭</td>
-                        <td class="tm-col-desc">
-                            <div class="tm-time-flow"><span class="tm-time-tag">전일</span> 바나산 · 영응사 · 야간 출국</div>
-                            <ul class="tm-desc-list">
-                                <li>호텔 조식 후 체크아웃 · <strong>바나산</strong> 이동 (약 40분)</li>
-                                <li>왕복 케이블카 + 썬월드 테마파크 + <strong>골든브릿지</strong></li>
-                                <li>손짜반도 68m 해수관음상 <strong>영응사</strong></li>
-                                <li>한식 석식 <strong>솔향</strong> 후 다낭 공항 이동</li>
-                                <li><strong>[22:55]</strong> 대한항공(KE460) 다낭 출발</li>
-                            </ul>
-                        </td>
-                        <td class="tm-col-meal">
-                            <div class="tm-meal-wrapper">
-                                <div class="tm-meal-simple"><strong>조</strong> 호텔식</div>
-                                <div class="tm-meal-simple"><strong>중</strong> 포시즌 뷔페</div>
-                                <div class="tm-meal-simple"><strong>석</strong> <span class="tm-highlight">솔향(한식)</span></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="tm-day-divider">
-                        <td class="tm-col-date">5일차<br><span class="text-[9px] text-slate-500 font-normal">10/23(금)</span><br><br>인천</td>
-                        <td class="tm-col-desc">
-                            <div class="tm-time-flow"><span class="tm-time-tag">새벽</span> 인천 도착 · 해산</div>
-                            <ul class="tm-desc-list">
-                                <li><strong>[05:30]</strong> 인천국제공항 제2터미널 도착</li>
-                                <li>수하물 수령 후 전원 해산 · 각 가정 안전 귀가</li>
-                            </ul>
-                        </td>
-                        <td class="tm-col-meal">
-                            <div class="tm-meal-wrapper">
-                                <div class="tm-meal-simple"><strong>조</strong> 기내식</div>
-                                <div class="tm-meal-simple"><strong>중</strong> 불포함</div>
-                                <div class="tm-meal-simple"><strong>석</strong> 불포함</div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="print-contacts">
-                <span><span class="pc-role">담당</span> 이재명 대표 010-9443-7881</span>
-                <span><span class="pc-role">상황실</span> 조혁 이사 010-4249-4026</span>
-                <span><span class="pc-role">현지가이드</span> 가이드 미정</span>
-                <span><span class="pc-role">영사콜센터</span> +82-2-3210-0404</span>
-            </div>
-
-            <div class="print-credit">
-                <p class="print-credit-text">[System Powered by TOURMAKER] 본 스마트 가이드북은 <strong>북평초등학교</strong>의 기획과 <strong>투어메이커</strong>의 트래블 테크 기술 제휴로 제작되었습니다.</p>
-            </div>
-        </div>
-
         <section id="home" class="hero-bg min-h-[75vh] flex items-center justify-center text-center px-4 relative">
             <div class="animate-fade-in-up text-white z-10 w-full max-w-5xl">
                 <span class="bg-white/20 backdrop-blur-md px-6 py-2.5 rounded-full text-sm font-bold mb-6 inline-block border border-white/30 tracking-wide shadow-lg">
@@ -313,7 +211,7 @@
                     <div class="bg-blue-50/50 p-8 rounded-3xl border border-blue-100 shadow-sm hover:-translate-y-1 transition-transform">
                         <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-amber-500 text-2xl mb-4 shadow-sm"><i class="fa-solid fa-landmark"></i></div>
                         <h3 class="text-xl font-bold text-slate-800 mb-3">살아있는 역사 문화 체험</h3>
-                        <p class="text-slate-600 text-sm leading-relaxed">유네스코 호이안 구시가지, 다낭박물관, 바구니배·씨클로 체험으로 교실 밖 진짜 문화를 배웁니다.</p>
+                        <p class="text-slate-600 text-sm leading-relaxed">호텔 수영장 물놀이, 유네스코 호이안 구시가지, 바구니배·전동카·씨클로 체험으로 교실 밖 진짜 문화를 배웁니다.</p>
                     </div>
                     <div class="bg-blue-50/50 p-8 rounded-3xl border border-blue-100 shadow-sm hover:-translate-y-1 transition-transform">
                         <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-rose-500 text-2xl mb-4 shadow-sm"><i class="fa-solid fa-mountain-sun"></i></div>
@@ -330,15 +228,15 @@
                 <div class="grid md:grid-cols-2 gap-4">
                     <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6">
                         <h4 class="font-bold text-tm mb-3 flex items-center gap-2"><i class="fa-solid fa-umbrella-beach"></i> 다낭 — 해변과 현대 스카이라인</h4>
-                        <p class="text-slate-600 text-sm leading-relaxed">미케해변·한강·드래곤브릿지로 상징되는 중부 거점 도시입니다. 박물관·성당의 역사와 바나힐·영응사 관음상, 야간 유람선이 하루의 리듬을 만듭니다.</p>
+                        <p class="text-slate-600 text-sm leading-relaxed">미케해변·한강으로 상징되는 중부 거점 도시입니다. 2일차 바나힐·한강 유람선, 4일차 박물관·사랑의 부두·3D미술관·영응사가 하루의 리듬을 만듭니다.</p>
                     </div>
                     <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6">
                         <h4 class="font-bold text-amber-700 mb-3 flex items-center gap-2"><i class="fa-solid fa-landmark"></i> 호이안 — 등불의 올드타운</h4>
-                        <p class="text-slate-600 text-sm leading-relaxed">유네스코 세계문화유산 고대 항구 도시. 내원교와 전통 가옥, 투본강 보트·씨클로 야경이 가을 다낭 일정과 잘 어울립니다.</p>
+                        <p class="text-slate-600 text-sm leading-relaxed">유네스코 세계문화유산 고대 항구 도시. 내원교와 전통 가옥, 바구니배·전동카·씨클로 야경이 가을 다낭 일정과 잘 어울립니다.</p>
                     </div>
                     <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6">
-                        <h4 class="font-bold text-emerald-700 mb-3 flex items-center gap-2"><i class="fa-solid fa-mountain-sun"></i> 바나힐 · 오행산</h4>
-                        <p class="text-slate-600 text-sm leading-relaxed">고지 케이블카와 골든브릿지, 대리석 산군의 동굴·전망이 다낭 근교의 대표 하이라이트입니다.</p>
+                        <h4 class="font-bold text-emerald-700 mb-3 flex items-center gap-2"><i class="fa-solid fa-mountain-sun"></i> 바나힐 · 호텔 수영장</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed">2일차 고지 케이블카와 골든브릿지, 3일차 오전 호텔 수영장 물놀이가 다낭 일정의 대표 하이라이트입니다.</p>
                     </div>
                     <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6">
                         <h4 class="font-bold text-rose-700 mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-info"></i> 포함 안내</h4>
@@ -509,11 +407,14 @@
                 <div class="flex flex-wrap gap-2 justify-center mb-6">
                     <button onclick="changeMapAndTab('all')" class="map-tab-btn active px-5 py-2 rounded-full text-sm font-bold border bg-tm text-white border-tm shadow-sm transition-colors">전체</button>
                     <button onclick="changeMapAndTab('day1')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">1일차 도착 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#0ea5e9] ml-1"></span></button>
-                    <button onclick="changeMapAndTab('day2')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">2일차 다낭 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#10b981] ml-1"></span></button>
+                    <button onclick="changeMapAndTab('day2')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">2일차 바나힐 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#10b981] ml-1"></span></button>
                     <button onclick="changeMapAndTab('day3')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">3일차 호이안 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#f59e0b] ml-1"></span></button>
-                    <button onclick="changeMapAndTab('day4')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">4일차 바나힐 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#8b5cf6] ml-1"></span></button>
+                    <button onclick="changeMapAndTab('day4')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">4일차 시내·귀국 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#8b5cf6] ml-1"></span></button>
                 </div>
-                <div id="map"></div>
+                <div id="map-wrap" class="relative">
+                    <div id="map"></div>
+                    <div id="map-leg"></div>
+                </div>
                 <p id="map-hint" class="text-center text-xs text-tm font-bold mt-4">✈️ 전체 보기: 대한항공 직항 노선 (KE459 · KE460)</p>
                 <p class="text-center text-xs text-slate-400 mt-1">※ 상기 지도는 주요 랜드마크 기준이며 실제 세부 이동과 다를 수 있습니다.</p>
             </div>
@@ -576,59 +477,39 @@
                         <div class="flex items-center gap-4 mb-8 border-b pb-5">
                             <div class="bg-[#10b981] text-white text-xl font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm">2일</div>
                             <div>
-                                <h3 class="font-bold text-xl text-slate-800">다낭 시내 역사와 문화 명소</h3>
+                                <h3 class="font-bold text-xl text-slate-800">구름 위의 테마파크, 바나산</h3>
                                 <div class="mt-2 flex flex-wrap gap-2 text-xs font-bold">
                                     <span class="bg-slate-100 text-slate-500 px-2 py-1 rounded">조: 호텔식</span>
-                                    <span class="bg-orange-50 text-orange-700 border border-orange-100 px-2 py-1 rounded">중: 마담란</span>
-                                    <span class="bg-rose-50 text-rose-700 border border-rose-100 px-2 py-1 rounded">석: 다낭타워 스테이크</span>
+                                    <span class="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-1 rounded">중: 포시즌 뷔페</span>
+                                    <span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-1 rounded">석: 솔향(한식)</span>
                                 </div>
                             </div>
                         </div>
                         <div class="relative border-l-2 border-slate-200 ml-4 pl-6 space-y-7">
                             <div class="relative">
-                                <div class="timeline-dot bg-cyan-500 ring-cyan-100"></div>
+                                <div class="timeline-dot bg-[#10b981] ring-emerald-100"></div>
                                 <div class="schedule-media">
                                     <div class="schedule-desc">
-                                        <h4 class="font-bold text-lg text-slate-800">미케비치 · 다낭박물관</h4>
-                                        <p class="text-sm text-slate-600 mt-2">세계 6대 해변으로 꼽히는 미케비치에서 음료와 휴식을 취한 뒤, 다낭의 역사·전쟁·문화를 전시한 박물관을 견학합니다.</p>
+                                        <h4 class="font-bold text-lg text-slate-800">바나산 · 골든브릿지 · 썬월드</h4>
+                                        <p class="text-sm text-slate-600 mt-2">호텔 조식 후 바나산으로 이동합니다(약 40분). 케이블카로 정상에 올라 골든브릿지와 테마파크를 둘러봅니다. 중식은 포시즌 뷔페입니다.</p>
                                     </div>
-                                    <img src="assets/images/day2-mykhe.jpg" alt="미케해변" class="schedule-thumb">
+                                    <img src="assets/images/day4-goldenbridge.jpg" alt="골든브릿지" class="schedule-thumb">
                                 </div>
                             </div>
                             <div class="relative">
-                                <div class="timeline-dot bg-orange-400 ring-orange-100"></div>
-                                <h4 class="font-bold text-lg text-slate-800">중식 마담란 (현지식)</h4>
-                                <p class="text-sm text-slate-500 mt-1">아이들의 입맛에도 잘 맞는 다낭 대표 현지식</p>
-                            </div>
-                            <div class="relative">
-                                <div class="timeline-dot bg-pink-500 ring-pink-100"></div>
-                                <div class="schedule-media">
-                                    <div class="schedule-desc">
-                                        <h4 class="font-bold text-lg text-slate-800">사랑의 부두 · 다낭성당</h4>
-                                        <p class="text-sm text-slate-600 mt-2">다낭의 새로운 명소 사랑의 부두와, 1923년 프랑스 식민지 시절 지어진 핑크빛 다낭성당에서 단체 사진을 남깁니다.</p>
-                                    </div>
-                                    <img src="assets/images/day2-cathedral.jpg" alt="다낭성당" class="schedule-thumb">
-                                </div>
-                            </div>
-                            <div class="relative">
-                                <div class="timeline-dot bg-violet-500 ring-violet-100"></div>
-                                <div class="schedule-media">
-                                    <div class="schedule-desc">
-                                        <h4 class="font-bold text-lg text-slate-800">아트 인 파라다이스 (3D 미술관)</h4>
-                                        <p class="text-sm text-slate-600 mt-2">베트남 최대 규모 3D 트릭아트 미술관에서 친구들과 창의적인 사진을 연출합니다.</p>
-                                    </div>
-                                    <img src="assets/images/day2-lovebridge.jpg" alt="사랑의 부두" class="schedule-thumb">
-                                </div>
+                                <div class="timeline-dot bg-amber-400 ring-amber-100"></div>
+                                <h4 class="font-bold text-lg text-slate-800">시내 카페 휴식</h4>
+                                <p class="text-sm text-slate-500 mt-1">다낭 시내 카페에서 음료 1잔을 마시며 편안하게 휴식합니다.</p>
                             </div>
                             <div class="relative bg-indigo-50 p-5 rounded-2xl border border-indigo-100">
                                 <div class="timeline-dot bg-indigo-600 ring-indigo-100" style="left: -50px; top: 18px;"></div>
                                 <span class="text-xs font-bold bg-indigo-600 text-white px-2 py-1 rounded inline-block mb-2">야경</span>
-                                <h4 class="font-bold text-lg text-slate-800">다낭타워 스테이크 · 한강 유람선</h4>
-                                <p class="text-sm text-slate-600 mt-1">다낭타워에서 석식 후, 화려한 야경을 감상하는 한강 유람선에 탑승합니다.</p>
+                                <h4 class="font-bold text-lg text-slate-800">솔향 한식 · 한강 유람선</h4>
+                                <p class="text-sm text-slate-600 mt-1">한식(솔향)으로 저녁 식사를 한 뒤, 다낭 야경을 감상할 수 있는 한강 유람선에 탑승합니다.</p>
                             </div>
                             <div class="relative">
                                 <div class="timeline-dot bg-slate-800 ring-slate-200"></div>
-                                <h4 class="font-bold text-lg text-slate-800">호텔 복귀 및 휴식</h4>
+                                <h4 class="font-bold text-lg text-slate-800">호텔 투숙 및 휴식</h4>
                             </div>
                         </div>
                     </div>
@@ -647,38 +528,35 @@
                         </div>
                         <div class="relative border-l-2 border-slate-200 ml-4 pl-6 space-y-7">
                             <div class="relative">
-                                <div class="timeline-dot bg-[#f59e0b] ring-amber-100"></div>
-                                <div class="schedule-media">
-                                    <div class="schedule-desc">
-                                        <h4 class="font-bold text-lg text-slate-800">오행산 (마블마운틴)</h4>
-                                        <p class="text-sm text-slate-600 mt-2">산 전체가 대리석으로 이루어진 신비로운 오행산을 편도 엘리베이터로 편안하게 오르고, 동굴과 사원을 관람합니다.</p>
-                                    </div>
-                                    <img src="assets/images/day3-marble.jpg" alt="오행산" class="schedule-thumb">
-                                </div>
+                                <div class="timeline-dot bg-sky-500 ring-sky-100"></div>
+                                <h4 class="font-bold text-lg text-slate-800">호텔 수영장 물놀이</h4>
+                                <p class="text-sm text-slate-500 mt-1">호텔 조식 후 숙소 수영장에서 물놀이를 하며 여유롭게 하루를 시작합니다.</p>
                             </div>
                             <div class="relative">
-                                <div class="timeline-dot bg-sky-500 ring-sky-100"></div>
-                                <h4 class="font-bold text-lg text-slate-800">호이안 이동 · 바구니배(틴퉁) · 중식</h4>
-                                <p class="text-sm text-slate-500 mt-1">약 50분 이동 · SNS 인기 전통 어선 체험 · 궁식당 소불고기</p>
+                                <div class="timeline-dot bg-[#f59e0b] ring-amber-100"></div>
+                                <h4 class="font-bold text-lg text-slate-800">호이안 이동 · 바구니배 · 중식</h4>
+                                <p class="text-sm text-slate-500 mt-1">약 50분 이동 · 바구니배 체험 · 궁식당 소불고기</p>
                             </div>
                             <div class="relative">
                                 <div class="timeline-dot bg-amber-600 ring-amber-100"></div>
                                 <div class="schedule-media">
                                     <div class="schedule-desc">
-                                        <h4 class="font-bold text-lg text-slate-800">호이안 구시가지 (UNESCO)</h4>
-                                        <ul class="text-sm text-slate-600 mt-2 space-y-1 list-disc pl-4">
-                                            <li><strong>내원교</strong> · 풍흥의집 · 떤키의집 · 관운장 사당</li>
-                                            <li>투본강 보트 (도자기마을)</li>
-                                        </ul>
+                                        <h4 class="font-bold text-lg text-slate-800">호이안 구시가지 (UNESCO) · 카페 휴식</h4>
+                                        <p class="text-sm text-slate-600 mt-2">내원교, 풍흥의집, 떤키의집, 관운장 사당 등을 둘러본 뒤 호이안 카페에서 음료 1잔을 마시며 휴식합니다.</p>
                                     </div>
                                     <img src="assets/images/day3-hoian.jpg" alt="호이안 구시가지" class="schedule-thumb">
                                 </div>
+                            </div>
+                            <div class="relative">
+                                <div class="timeline-dot bg-lime-500 ring-lime-100"></div>
+                                <h4 class="font-bold text-lg text-slate-800">전동카 탑승 (편도)</h4>
+                                <p class="text-sm text-slate-500 mt-1">호이안의 거리와 주변 풍경을 감상하며 전동카를 편도로 탑승합니다.</p>
                             </div>
                             <div class="relative bg-amber-50 p-5 rounded-2xl border border-amber-100">
                                 <div class="timeline-dot bg-amber-500 ring-amber-100" style="left: -50px; top: 18px;"></div>
                                 <span class="text-xs font-bold bg-amber-500 text-white px-2 py-1 rounded inline-block mb-2">야경</span>
                                 <h4 class="font-bold text-lg text-slate-800">호이안 야경 씨클로 · 모닝글로리</h4>
-                                <p class="text-sm text-slate-600 mt-1">자전거 인력거 씨클로로 등불 야경을 둘러본 뒤 특식 석식, 다낭으로 귀환합니다. (약 50분)</p>
+                                <p class="text-sm text-slate-600 mt-1">씨클로로 등불 야경을 둘러본 뒤 모닝글로리에서 석식하고, 다낭으로 귀환합니다. (약 50분)</p>
                             </div>
                         </div>
                     </div>
@@ -687,28 +565,38 @@
                         <div class="flex items-center gap-4 mb-8 border-b pb-5">
                             <div class="bg-[#8b5cf6] text-white text-xl font-bold w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm">4일</div>
                             <div>
-                                <h3 class="font-bold text-xl text-slate-800">구름 위의 테마파크, 바나산</h3>
+                                <h3 class="font-bold text-xl text-slate-800">다낭 시내 탐방 후 귀국</h3>
                                 <div class="mt-2 flex flex-wrap gap-2 text-xs font-bold">
                                     <span class="bg-slate-100 text-slate-500 px-2 py-1 rounded">조: 호텔식</span>
-                                    <span class="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-1 rounded">중: 포시즌 뷔페</span>
-                                    <span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-1 rounded">석: 솔향(한식)</span>
+                                    <span class="bg-orange-50 text-orange-700 border border-orange-100 px-2 py-1 rounded">중: 마담란</span>
+                                    <span class="bg-rose-50 text-rose-700 border border-rose-100 px-2 py-1 rounded">석: 다낭타워 스테이크</span>
                                 </div>
                             </div>
                         </div>
                         <div class="relative border-l-2 border-slate-200 ml-4 pl-6 space-y-7">
                             <div class="relative">
-                                <div class="timeline-dot bg-slate-400 ring-slate-100"></div>
-                                <h4 class="font-bold text-lg text-slate-800">조식 · 호텔 체크아웃 · 바나산 이동</h4>
-                                <p class="text-sm text-slate-500 mt-1">약 40분 소요</p>
-                            </div>
-                            <div class="relative">
-                                <div class="timeline-dot bg-[#8b5cf6] ring-purple-100"></div>
+                                <div class="timeline-dot bg-cyan-500 ring-cyan-100"></div>
                                 <div class="schedule-media">
                                     <div class="schedule-desc">
-                                        <h4 class="font-bold text-lg text-slate-800">바나산 · 골든브릿지 · 썬월드</h4>
-                                        <p class="text-sm text-slate-600 mt-2">기네스북에 오른 긴 케이블카로 정상에 올라 골든브릿지를 관람하고, 썬월드 테마파크에서 자유 시간을 갖습니다. 중식은 포시즌 뷔페입니다.</p>
+                                        <h4 class="font-bold text-lg text-slate-800">미케비치 (음료 1잔)</h4>
+                                        <p class="text-sm text-slate-600 mt-2">호텔 조식 후 세계 6대 해변으로 꼽히는 미케비치에서 음료 1잔을 마시며 휴식합니다.</p>
                                     </div>
-                                    <img src="assets/images/day4-goldenbridge.jpg" alt="골든브릿지" class="schedule-thumb">
+                                    <img src="assets/images/day2-mykhe.jpg" alt="미케해변" class="schedule-thumb">
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <div class="timeline-dot bg-orange-400 ring-orange-100"></div>
+                                <h4 class="font-bold text-lg text-slate-800">다낭박물관</h4>
+                                <p class="text-sm text-slate-500 mt-1">다낭의 역사, 전쟁, 문화를 전시해 놓은 다낭박물관을 견학합니다.</p>
+                            </div>
+                            <div class="relative">
+                                <div class="timeline-dot bg-pink-500 ring-pink-100"></div>
+                                <div class="schedule-media">
+                                    <div class="schedule-desc">
+                                        <h4 class="font-bold text-lg text-slate-800">사랑의 부두 · 아트 인 파라다이스</h4>
+                                        <p class="text-sm text-slate-600 mt-2">다낭의 새로운 명소 사랑의 부두를 방문한 뒤, 베트남 최대 규모 3D 트릭아트 미술관에서 창의적인 사진을 남깁니다. 중식은 현지식(마담란)입니다.</p>
+                                    </div>
+                                    <img src="assets/images/day2-lovebridge.jpg" alt="사랑의 부두" class="schedule-thumb">
                                 </div>
                             </div>
                             <div class="relative">
@@ -723,8 +611,8 @@
                             </div>
                             <div class="relative">
                                 <div class="timeline-dot bg-tm ring-blue-100"></div>
-                                <h4 class="font-bold text-lg text-slate-800">솔향 한식 석식 · 공항 이동</h4>
-                                <p class="text-sm text-slate-500 mt-1">여행의 피로를 풀어줄 한식 후 다낭 국제공항에서 탑승 수속</p>
+                                <h4 class="font-bold text-lg text-slate-800">다낭타워 스테이크 · 공항 이동</h4>
+                                <p class="text-sm text-slate-500 mt-1">다낭타워에서 석식 후 다낭 국제공항에서 탑승 수속</p>
                             </div>
                             <div class="relative">
                                 <div class="timeline-dot bg-slate-800 ring-slate-200"></div>
@@ -779,7 +667,7 @@
                             <p class="text-sm text-slate-500 mb-6 font-medium">Muong Thanh Luxury Da Nang · 또는 동급 준5성급</p>
 
                             <ul class="text-sm text-slate-600 space-y-3">
-                                <li class="flex items-start gap-3"><i class="fa-solid fa-star text-yellow-400 mt-1"></i> <div><strong>준5성급 · 학교 단체 맞춤</strong><br><span class="text-xs text-slate-500">보안이 비교적 철저하고 조식 뷔페·야외 수영장을 갖춘 시내권 숙박입니다. 부킹 상황에 따라 동급으로 안내될 수 있습니다.</span></div></li>
+                                <li class="flex items-start gap-3"><i class="fa-solid fa-star text-yellow-400 mt-1"></i> <div><strong>준5성급 · 학교 단체 맞춤</strong><br><span class="text-xs text-slate-500">보안이 비교적 철저하고 조식 뷔페·야외 수영장을 갖춘 시내권 숙박입니다. 3일차 오전 물놀이도 숙소에서 진행합니다. 부킹 상황에 따라 동급으로 안내될 수 있습니다.</span></div></li>
                                 <li class="flex items-start gap-3"><i class="fa-solid fa-location-dot text-rose-400 mt-1"></i> <div><strong>미케해변 인근 접근성</strong><br><span class="text-xs text-slate-500">시내·해변 동선에 유리한 다낭 시내권</span></div></li>
                                 <li class="flex items-start gap-3"><i class="fa-solid fa-bus text-blue-400 mt-1"></i> <div><strong>전용차량 이동</strong><br><span class="text-xs text-slate-500">시내·관광지 이동은 전용차량으로 안전하게 진행합니다.</span></div></li>
                             </ul>
@@ -802,7 +690,7 @@
                     <div class="bg-white rounded-2xl overflow-hidden shadow-md border border-rose-100 group">
                         <div class="h-48 overflow-hidden relative">
                             <img src="assets/images/dine-madamlan.jpg" alt="마담란 현지식" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute top-3 left-3 bg-rose-600 text-white text-[10px] px-2 py-1 rounded font-bold shadow">2일차 중식</div>
+                            <div class="absolute top-3 left-3 bg-rose-600 text-white text-[10px] px-2 py-1 rounded font-bold shadow">4일차 중식</div>
                         </div>
                         <div class="p-5">
                             <h4 class="font-bold text-lg text-slate-800 mb-1">마담란 (Madam Lan) - 현지식의 정석</h4>
@@ -812,7 +700,7 @@
                     <div class="bg-white rounded-2xl overflow-hidden shadow-md border border-rose-100 group">
                         <div class="h-48 overflow-hidden relative">
                             <img src="assets/images/dine-steak.jpg" alt="다낭타워 스테이크" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute top-3 left-3 bg-amber-600 text-white text-[10px] px-2 py-1 rounded font-bold shadow">2일차 석식</div>
+                            <div class="absolute top-3 left-3 bg-amber-600 text-white text-[10px] px-2 py-1 rounded font-bold shadow">4일차 석식</div>
                         </div>
                         <div class="p-5">
                             <h4 class="font-bold text-lg text-slate-800 mb-1">다낭타워 스테이크 - 야경과 프리미엄 양식</h4>
@@ -842,7 +730,7 @@
                     <div class="bg-white rounded-2xl overflow-hidden shadow-md border border-rose-100 group">
                         <div class="h-48 overflow-hidden relative">
                             <img src="assets/images/dine-buffet.jpg" alt="바나힐 포시즌 뷔페" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute top-3 left-3 bg-teal-600 text-white text-[10px] px-2 py-1 rounded font-bold shadow">4일차 중식</div>
+                            <div class="absolute top-3 left-3 bg-teal-600 text-white text-[10px] px-2 py-1 rounded font-bold shadow">2일차 중식</div>
                         </div>
                         <div class="p-5">
                             <h4 class="font-bold text-lg text-slate-800 mb-1">바나힐 포시즌 뷔페 - 테마파크 속 다채로운 미식</h4>
@@ -852,11 +740,11 @@
                     <div class="bg-white rounded-2xl overflow-hidden shadow-md border border-rose-100 group">
                         <div class="h-48 overflow-hidden relative">
                             <img src="assets/images/dine-korean.jpg" alt="솔향 한식" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute top-3 left-3 bg-blue-600 text-white text-[10px] px-2 py-1 rounded font-bold shadow">4일차 석식</div>
+                            <div class="absolute top-3 left-3 bg-blue-600 text-white text-[10px] px-2 py-1 rounded font-bold shadow">2일차 석식</div>
                         </div>
                         <div class="p-5">
-                            <h4 class="font-bold text-lg text-slate-800 mb-1">솔향 - 여행을 마무리하는 따뜻한 한식</h4>
-                            <p class="text-sm text-slate-600">한국으로 돌아가기 전, 여행의 피로를 풀어주고 속을 편안하게 해주는 정성 가득한 한식 정식을 제공합니다.</p>
+                            <h4 class="font-bold text-lg text-slate-800 mb-1">솔향 - 바나산 탐방 후의 따뜻한 한식</h4>
+                            <p class="text-sm text-slate-600">바나산 일정을 마친 뒤 속을 편안하게 해주는 정성 가득한 한식 정식을 제공합니다.</p>
                         </div>
                     </div>
                 </div>
@@ -1097,6 +985,216 @@
         </div>
     </footer>
 
+    <div id="print-area" class="hidden print:block w-full bg-white text-black py-4">
+        <div class="print-page">
+        <div class="print-header-top">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker">
+            <div class="print-doc-no">문서번호: TM-261019-BUKPYEONG · 1/2</div>
+        </div>
+        <h1 class="print-title">[북평초등학교] 다낭/호이안 3박 5일 해외문화탐방 일정표</h1>
+        <p class="print-subtitle">※ 상기 일정은 항공기 연발착 및 현지 사정에 따라 다소 변경될 수 있습니다.</p>
+
+        <div class="print-overview">
+            <div><span class="label">행사기간</span> 2026. 10. 19 (월) ~ 10. 23 (금)</div>
+            <div><span class="label">행사인원</span> 18명 (학생 14 + 인솔교사 4)</div>
+            <div><span class="label">이용항공</span> 대한항공 KE459 / KE460</div>
+        </div>
+
+        <table class="tm-table">
+            <thead>
+                <tr>
+                    <th class="tm-col-date">일자</th>
+                    <th class="tm-col-desc">상세 탐방 일정 및 동선</th>
+                    <th class="tm-col-meal">식사</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="tm-day-divider">
+                    <td class="tm-col-date"><strong>1일차</strong><br>10/19 (월)<br><br>인천<br>다낭</td>
+                    <td class="tm-col-desc">
+                        <div class="tm-time-flow"><span class="tm-time-tag">18:20</span> 인천국제공항 제2터미널 출발 (대한항공 KE459)</div>
+                        <div class="tm-time-flow"><span class="tm-time-tag">21:05</span> 다낭국제공항 도착 후 현지인 가이드 미팅</div>
+                        <ul class="tm-desc-list">
+                            <li>[전용차량] 35인승 탑승 후 호텔로 이동</li>
+                            <li>호텔 투숙 및 휴식</li>
+                        </ul>
+                        <hr class="tm-hotel-divider">
+                        <div class="tm-hotel-info"><i class="fa-solid fa-bed"></i> 호텔명 : 무엉탄럭셔리 ☎ 023-6395-6789</div>
+                    </td>
+                    <td class="tm-col-meal">
+                        <div class="tm-meal-wrapper">
+                            <div class="tm-meal-simple"><strong>조:</strong><div class="tm-meal-menu">-</div></div>
+                            <div class="tm-meal-simple"><strong>중:</strong><div class="tm-meal-menu">-</div></div>
+                            <div class="tm-meal-simple"><strong>석:</strong><div class="tm-meal-menu">-</div></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="tm-day-divider">
+                    <td class="tm-col-date"><strong>2일차</strong><br>10/20 (화)<br><br>다낭<br>바나산</td>
+                    <td class="tm-col-desc">
+                        <div class="tm-time-flow"><span class="tm-time-tag">전일</span> 호텔 조식 후 바나산으로 이동 (약 40분)</div>
+                        <ul class="tm-desc-list">
+                            <li>다낭을 대표하는 국립공원 <span class="tm-highlight">바나산 (케이블카 왕복) 및 테마파크</span></li>
+                            <li>자연경관 감상 + 놀이공원 + <span class="tm-highlight">골든 브릿지</span></li>
+                            <li>시내 카페에서 음료 1잔을 마시며 휴식</li>
+                            <li>다낭 야경을 감상할 수 있는 <span class="tm-highlight">한강 유람선</span></li>
+                            <li>호텔 투숙 및 휴식</li>
+                        </ul>
+                        <hr class="tm-hotel-divider">
+                        <div class="tm-hotel-info"><i class="fa-solid fa-bed"></i> 호텔명 : 무엉탄럭셔리 (상동)</div>
+                    </td>
+                    <td class="tm-col-meal">
+                        <div class="tm-meal-wrapper">
+                            <div class="tm-meal-simple"><strong>조:</strong><div class="tm-meal-menu">호텔식</div></div>
+                            <div class="tm-meal-simple"><strong>중:</strong><div class="tm-meal-menu">포시즌뷔페</div></div>
+                            <div class="tm-meal-simple"><strong>석:</strong><div class="tm-meal-menu">한식<span class="tm-meal-sub">(솔향)</span></div></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="tm-day-divider">
+                    <td class="tm-col-date"><strong>3일차</strong><br>10/21 (수)<br><br>다낭<br>호이안</td>
+                    <td class="tm-col-desc">
+                        <div class="tm-time-flow"><span class="tm-time-tag">전일</span> 호텔 조식 후 수영장 물놀이 · 호이안 탐방</div>
+                        <ul class="tm-desc-list">
+                            <li>호텔 <span class="tm-highlight">수영장 물놀이</span></li>
+                            <li>호이안 이동 (약 50분) 후 <span class="tm-highlight">바구니배 체험</span></li>
+                            <li>유네스코 지정 문화유산 <span class="tm-highlight">호이안 구시가지</span> (내원교, 풍흥의집, 떤키의집, 관운장 사당 등)</li>
+                            <li>호이안 카페에서 음료 1잔을 마시며 휴식</li>
+                            <li>호이안 거리와 주변 풍경 감상 <span class="tm-highlight">전동카 탑승(편도)</span></li>
+                            <li>호이안 야경과 시가지를 편하게 둘러보는 <span class="tm-highlight">씨클로 체험</span></li>
+                            <li>다낭 귀환 (약 50분) 후 휴식</li>
+                        </ul>
+                        <hr class="tm-hotel-divider">
+                        <div class="tm-hotel-info"><i class="fa-solid fa-bed"></i> 호텔명 : 무엉탄럭셔리 (상동)</div>
+                    </td>
+                    <td class="tm-col-meal">
+                        <div class="tm-meal-wrapper">
+                            <div class="tm-meal-simple"><strong>조:</strong><div class="tm-meal-menu">호텔식</div></div>
+                            <div class="tm-meal-simple"><strong>중:</strong><div class="tm-meal-menu">소불고기<span class="tm-meal-sub">(궁식당)</span></div></div>
+                            <div class="tm-meal-simple"><strong>석:</strong><div class="tm-meal-menu">모닝글로리<span class="tm-meal-sub">(시그니처)</span></div></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="tm-day-divider">
+                    <td class="tm-col-date"><strong>4일차</strong><br>10/22 (목)<br><br>다낭<br>인천</td>
+                    <td class="tm-col-desc">
+                        <div class="tm-time-flow"><span class="tm-time-tag">전일</span> 호텔 조식 후 다낭 시내 탐방 · 출국</div>
+                        <ul class="tm-desc-list">
+                            <li>세계 6대 해변 여행자들의 휴식처 <span class="tm-highlight">미케비치</span> (음료 1잔)</li>
+                            <li>다낭의 역사, 전쟁, 문화를 전시해 놓은 <span class="tm-highlight">다낭박물관</span></li>
+                            <li>다낭의 새로운 명소 <span class="tm-highlight">사랑의 부두</span></li>
+                            <li>베트남 최대 규모 3D 트릭아트 미술관 <span class="tm-highlight">아트 인 파라다이스</span></li>
+                            <li>베트남 최대 68m 불상이 위치한 <span class="tm-highlight">손짜반도 영응사</span> (비밀의 사원)</li>
+                            <li>공항으로 이동 후 국제선 탑승 수속</li>
+                        </ul>
+                        <div class="tm-time-flow" style="margin-top: 8px;"><span class="tm-time-tag">22:55</span> 다낭국제공항 출발 (대한항공 KE460)</div>
+                    </td>
+                    <td class="tm-col-meal">
+                        <div class="tm-meal-wrapper">
+                            <div class="tm-meal-simple"><strong>조:</strong><div class="tm-meal-menu">호텔식</div></div>
+                            <div class="tm-meal-simple"><strong>중:</strong><div class="tm-meal-menu">현지식<span class="tm-meal-sub">(마담란)</span></div></div>
+                            <div class="tm-meal-simple"><strong>석:</strong><div class="tm-meal-menu">스테이크<span class="tm-meal-sub">(다낭타워)</span></div></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="tm-day-divider">
+                    <td class="tm-col-date"><strong>5일차</strong><br>10/23 (금)<br><br>인천</td>
+                    <td class="tm-col-desc">
+                        <div class="tm-time-flow"><span class="tm-time-tag">05:30</span> 인천국제공항 제2터미널 도착</div>
+                        <ul class="tm-desc-list">
+                            <li>수하물 수취 후 해산 및 각 가정으로 안전 귀가</li>
+                        </ul>
+                    </td>
+                    <td class="tm-col-meal">
+                        <div class="tm-meal-wrapper">
+                            <div class="tm-meal-simple"><strong>조:</strong><div class="tm-meal-menu">-</div></div>
+                            <div class="tm-meal-simple"><strong>중:</strong><div class="tm-meal-menu">-</div></div>
+                            <div class="tm-meal-simple"><strong>석:</strong><div class="tm-meal-menu">-</div></div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="print-remarks">
+            ※ 상기 일정은 항공기 연발착 및 현지 사정에 따라 다소 변경될 수 있습니다.
+        </div>
+        <div class="print-contacts">
+            <span><span class="pc-role">현지가이드</span> 가이드 미정</span>
+            <span><span class="pc-role">주다낭총영사관</span> +84-23-6356-6100</span>
+            <span><span class="pc-role">영사긴급</span> +84-93-112-0404</span>
+        </div>
+        <div class="print-footer-box">
+            <a href="http://tourmaker.kr" class="print-brand-link"><i class="fa-solid fa-link"></i> [System Powered by TOURMAKER]</a>
+            <div class="print-manager">
+                <div class="names">담당자 : 이재명 010-9443-7881, 조혁 010-4249-4026</div>
+            </div>
+        </div>
+        </div>
+
+        <div class="print-page print-page-2">
+            <div class="print-header-top">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker">
+                <div class="print-doc-no">문서번호: TM-261019-BUKPYEONG · 2/2</div>
+            </div>
+            <div class="print-title">여행자 준비물 &amp; 스마트 가이드북</div>
+            <p class="print-subtitle">※ 다낭·호이안 일정에 맞춰 출발 전에 체크하고, QR로 스마트 가이드북을 열어 주세요.</p>
+            <div class="print-overview">
+                <div><span class="label">행사기간</span> 2026. 10. 19 (월) ~ 10. 23 (금)</div>
+                <div><span class="label">행사인원</span> 18명 (학생 14 + 인솔교사 4)</div>
+                <div><span class="label">이용항공</span> 대한항공 KE459 / KE460</div>
+            </div>
+            <div class="print-checklist">
+                <h2>□ 북평초등학교 다낭·호이안 출발 전 준비물</h2>
+                <div class="print-checklist-grid">
+                    <div class="print-check-item"><span class="print-check-box"></span>여권 원본 (귀국일 기준 유효기간 6개월 이상)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>여권 사본 2부 (가방·객실 분리 보관)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>사전입국신고(PAI) QR 캡처·PDF (도착 72시간 전~)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>개인 용돈 (달러 또는 동 환전)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>편한 걷기 신발 (바나산·호이안 도보)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>10월 우기 대비 접이식 우산·가벼운 우비</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>여름옷 + 얇은 긴팔(에어컨·차량용)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>수영복·수건 (3일차 호텔 수영장 물놀이)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>자외선 차단제·모자 (미케비치·바나산)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>모기기피제 (바구니배·호이안 야외)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>상비약·복용약·멀미약·지사제·방수밴드</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>세면도구 · 개인 위생용품</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>멀티 어댑터 (베트남 220V · A/C형)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>보조배터리(기내 휴대) · 충전기 · 케이블</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>해외 로밍/eSIM · 카카오톡 비상연락 확인</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>인천 T2 · 출발 3시간 전 집결 (15:20)</div>
+                </div>
+            </div>
+            <ul class="print-note-list">
+                <li>한국인은 45일 무비자(면제)이며, <strong>PAI는 별도 필수</strong>입니다. 다낭 도착 72시간 전인 <strong>10월 16일(금) 밤부터</strong> <strong>prearrival.immigration.gov.vn</strong>에서 무료 작성하세요.</li>
+                <li>베트남은 한국보다 <strong>2시간 느립니다</strong> (현지 UTC+7). 약 복용·기상 시간에 참고하세요.</li>
+                <li>10월 다낭·호이안은 우기입니다. 맑다가도 스콜이 잦으니 <strong>우산·우비</strong>를 가방에 넣어 두세요.</li>
+                <li>전압은 한국과 같은 220V입니다. 콘센트는 A/C형이라 한국 C형은 대체로 맞지만, A형 대비 <strong>멀티 어댑터</strong>를 챙기세요.</li>
+                <li>3일차 오전 <strong>호텔 수영장 물놀이</strong>가 있어 수영복·수건을 준비해 주세요. 바나산·호이안은 도보가 많으니 <strong>미끄럼 방지 걷기 신발</strong>을 권장합니다.</li>
+                <li>출국일 인천공항은 <strong>제2터미널</strong>입니다. 대한항공 KE459 18:20 출발이므로 <strong>15:20까지</strong> 수속 카운터 앞에 모여 주세요.</li>
+            </ul>
+            <div class="print-qr-box">
+                <img src="assets/images/guidebook-qr.png" alt="스마트 가이드북 QR">
+                <div class="qr-copy">
+                    <strong>스마트 가이드북 바로가기</strong>
+                    QR코드를 스캔하시면 실시간 날씨, 세부 일정, 탐방 동선, 준비물 체크리스트를 스마트폰에서 확인하실 수 있습니다.
+                    <div class="qr-url">https://indadady.github.io/261019_Danang_Bukpyeong/</div>
+                </div>
+            </div>
+            <div class="print-contacts">
+                <span><span class="pc-role">현지가이드</span> 가이드 미정</span>
+                <span><span class="pc-role">주다낭총영사관</span> +84-23-6356-6100</span>
+                <span><span class="pc-role">영사긴급</span> +84-93-112-0404</span>
+            </div>
+            <div class="print-footer-box">
+                <a href="http://tourmaker.kr" class="print-brand-link"><i class="fa-solid fa-link"></i> [System Powered by TOURMAKER]</a>
+                <div class="print-manager">
+                    <div class="names">담당자 : 이재명 010-9443-7881, 조혁 010-4249-4026</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl z-[9999] transition-all duration-300 translate-y-20 opacity-0 no-print pointer-events-none text-sm font-bold flex items-center gap-2">
         <i class="fa-solid fa-circle-check text-green-400"></i> <span id="toast-msg"></span>
     </div>
@@ -1151,164 +1249,341 @@
             }).catch(() => alert('복사에 실패했습니다. 아래 내용을 직접 선택해 복사해 주세요.'));
         }
 
+        const TEST_DATE = "";
+        const EVENT_DAYS = {
+            '2026-10-19': 'day1',
+            '2026-10-20': 'day2',
+            '2026-10-21': 'day3',
+            '2026-10-22': 'day4',
+            '2026-10-23': 'day5'
+        };
+        function getGuidebookToday() {
+            const q = new URLSearchParams(location.search).get('test_date');
+            if (q && /^\d{4}-\d{2}-\d{2}$/.test(q)) return q;
+            if (TEST_DATE) return TEST_DATE;
+            return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
+        }
+        function ymdDiffDays(a, b) {
+            const [ay, am, ad] = a.split('-').map(Number);
+            const [by, bm, bd] = b.split('-').map(Number);
+            return Math.round((Date.UTC(ay, am - 1, ad) - Date.UTC(by, bm - 1, bd)) / 86400000);
+        }
+        function getTodayDayKey() { return EVENT_DAYS[getGuidebookToday()] || null; }
+
         function updateDday(){
-            const start = new Date('2026-10-19T00:00:00'), end = new Date('2026-10-23T23:59:59'), today = new Date(); today.setHours(0,0,0,0);
-            const diff = Math.ceil((start-today)/86400000), badge = document.getElementById('d-day-badge'), hero = document.getElementById('hero-date');
-            if(diff>0){
-                badge.className='bg-tm text-white text-[10px] px-3 py-1 rounded-full font-bold shadow-sm animate-pulse'; badge.innerText='D-'+diff;
-            } else if(today<=end){
-                const d = Math.abs(diff)+1;
-                badge.className='bg-rose-500 text-white text-[10px] px-3 py-1 rounded-full font-bold shadow-sm animate-pulse'; badge.innerText='📍 '+d+'일차 진행중';
-                hero.innerHTML='현재 다낭/호이안 여정의 '+d+'일차가 진행 중입니다.';
-                hero.className='text-base md:text-lg text-white font-bold bg-rose-500/80 inline-block px-6 py-2.5 rounded-2xl mt-4 backdrop-blur-sm shadow-xl tracking-wide';
+            const today = getGuidebookToday();
+            const start = '2026-10-19', end = '2026-10-23';
+            const badge = document.getElementById('d-day-badge'), hero = document.getElementById('hero-date');
+            if (!badge) return;
+            if (today < start) {
+                badge.className = 'bg-tm text-white text-[10px] px-2.5 py-1 rounded-full font-bold shadow-sm animate-pulse';
+                badge.innerText = 'D-' + ymdDiffDays(start, today);
+            } else if (today <= end) {
+                const d = ymdDiffDays(today, start) + 1;
+                badge.className = 'bg-rose-500 text-white text-[10px] px-2.5 py-1 rounded-full font-bold shadow-sm animate-pulse';
+                badge.innerText = '📍 ' + d + '일차 진행중';
+                if (hero) hero.innerHTML = '현재 다낭·호이안 여정의 ' + d + '일차가 진행 중입니다.';
             } else {
-                badge.className='bg-slate-500 text-white text-[10px] px-3 py-1 rounded-full font-bold'; badge.innerText='🏁 여정 종료';
-                hero.innerHTML='모든 여정이 종료되었습니다. 좋은 추억으로 오래 간직되길 바랍니다.';
-                hero.className='text-sm md:text-base text-slate-200 font-medium bg-slate-800/80 inline-block px-6 py-2.5 rounded-2xl mt-4 backdrop-blur-sm border border-slate-600 shadow-xl tracking-wide';
+                badge.className = 'bg-slate-500 text-white text-[10px] px-2.5 py-1 rounded-full font-bold';
+                badge.innerText = '🏁 여정 종료';
+                if (hero) hero.innerHTML = '모든 여정이 종료되었습니다. 좋은 추억으로 오래 간직되길 바랍니다.';
             }
         }
         updateDday();
 
-        let map, layerGroup;
+        function showDayTab(tabId){
+            document.querySelectorAll('.schedule-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId)?.classList.remove('hidden');
+            document.querySelectorAll('.sched-tab').forEach(btn => {
+                btn.classList.remove('text-tm','border-b-2','border-tm');
+                btn.classList.add('text-slate-500');
+                if (btn.getAttribute('onclick') === `changeMapAndTab('${tabId}')`) {
+                    btn.classList.add('text-tm','border-b-2','border-tm');
+                    btn.classList.remove('text-slate-500');
+                }
+            });
+        }
+        function goToTodaySchedule() {
+            const dayKey = getTodayDayKey();
+            if (dayKey) changeMapAndTab(dayKey);
+            document.getElementById('schedule')?.scrollIntoView({ behavior: 'smooth' });
+        }
+        function goToTodayRoute() {
+            const dayKey = getTodayDayKey();
+            if (dayKey) changeMapAndTab(dayKey);
+            document.getElementById('map-section')?.scrollIntoView({ behavior: 'smooth' });
+        }
+        function initEventDayUI() {
+            const bar = document.getElementById('event-day-bar');
+            if (!bar) return;
+            const dayKey = getTodayDayKey();
+            const isEventDay = !!dayKey;
+            bar.classList.toggle('hidden', !isEventDay);
+            document.body.classList.toggle('event-day', isEventDay);
+            if (dayKey) showDayTab(dayKey);
+        }
+
+        let map, layerGroup, vehicleMarker = null, vehicleMode = null, mapDrawSeq = 0;
+        const osrmCache = {};
         const spots = {
-            icn: { c:[37.4602, 126.4407], t:'인천공항', col:'#64748b', i:'<i class="fa-solid fa-plane-departure"></i>' },
-            dad: { c:[16.0439, 108.1990], t:'다낭 공항', col:'#0ea5e9', i:'<i class="fa-solid fa-plane-arrival"></i>' },
-            hotel: { c:[16.0610, 108.2410], t:'호텔(무엉탄 럭셔리)', col:'#004098', i:'<i class="fa-solid fa-hotel"></i>' },
-            mykhe: { c:[16.0600, 108.2470], t:'미케비치', col:'#10b981', i:'<i class="fa-solid fa-umbrella-beach"></i>' },
-            museum: { c:[16.0490, 108.2208], t:'다낭박물관', col:'#10b981', i:'<i class="fa-solid fa-landmark"></i>' },
-            cathedral: { c:[16.0678, 108.2208], t:'다낭성당', col:'#10b981', i:'<i class="fa-solid fa-church"></i>' },
-            lovebridge: { c:[16.0615, 108.2230], t:'사랑의 부두', col:'#10b981', i:'<i class="fa-solid fa-heart"></i>' },
-            art3d: { c:[16.1040, 108.2400], t:'아트 인 파라다이스', col:'#10b981', i:'<i class="fa-solid fa-palette"></i>' },
-            tower: { c:[16.0700, 108.2235], t:'다낭타워', col:'#10b981', i:'<i class="fa-solid fa-building"></i>' },
-            hanriver: { c:[16.0715, 108.2240], t:'한강 유람선', col:'#10b981', i:'<i class="fa-solid fa-ship"></i>' },
-            marble: { c:[16.0036, 108.2640], t:'오행산', col:'#f59e0b', i:'<i class="fa-solid fa-mountain"></i>' },
-            basket: { c:[15.8920, 108.3380], t:'바구니배', col:'#f59e0b', i:'<i class="fa-solid fa-water"></i>' },
-            hoian: { c:[15.8801, 108.3380], t:'호이안 구시가지', col:'#f59e0b', i:'<i class="fa-solid fa-torii-gate"></i>' },
-            banahills: { c:[15.9977, 107.9881], t:'바나힐·골든브릿지', col:'#8b5cf6', i:'<i class="fa-solid fa-bridge"></i>' },
-            linhung: { c:[16.1003, 108.2775], t:'영응사', col:'#8b5cf6', i:'<i class="fa-solid fa-vihara"></i>' }
+            icn: { c:[37.4602, 126.4407], t:'인천공항', col:'#64748b', i:'✈️' },
+            dad: { c:[16.0439, 108.1990], t:'다낭 공항', col:'#0ea5e9', i:'🛬' },
+            hotel: { c:[16.0532, 108.2435], t:'무엉탄 럭셔리', col:'#004098', i:'🏨' },
+            banahills: { c:[15.9977, 107.9881], t:'바나산·골든브릿지', col:'#4338ca', i:'🚠' },
+            cruise: { c:[16.0715, 108.2240], t:'한강 유람선', col:'#3b82f6', i:'⛴️' },
+            basket: { c:[15.8750, 108.3670], t:'바구니배', col:'#d97706', i:'🚣' },
+            hoian: { c:[15.8801, 108.3380], t:'호이안 구시가지', col:'#c2410c', i:'🏮' },
+            mykhe: { c:[16.0600, 108.2470], t:'미케비치', col:'#0ea5e9', i:'🏖️' },
+            museum: { c:[16.0736, 108.2209], t:'다낭박물관', col:'#0ea5e9', i:'🏛️' },
+            lovebridge: { c:[16.0615, 108.2230], t:'사랑의 부두', col:'#ec4899', i:'💕' },
+            art3d: { c:[16.0477, 108.2475], t:'아트 인 파라다이스', col:'#8b5cf6', i:'🎨' },
+            sontra: { c:[16.1005, 108.2774], t:'영응사', col:'#4338ca', i:'🏯' }
         };
         const mapHints = {
             all: '✈️ 전체 보기: 대한항공 직항 노선 (KE459 · KE460)',
-            day1: '📍 1일차: 다낭 공항 도착 후 호텔 투숙',
-            day2: '📍 2일차: 미케 · 박물관 · 성당 · 3D미술관 · 한강 유람선',
-            day3: '📍 3일차: 오행산 · 바구니배 · 호이안 · 귀환',
-            day4: '📍 4일차: 바나힐 · 영응사 후 야간 귀국 (현지+항공)',
-            day5: '📍 5일차: 인천 도착 및 해산'
+            day1: '📍 1일차: 인천 → 다낭 공항 → 호텔',
+            day2: '📍 2일차: 호텔 → 바나산 → 한강유람선 → 호텔',
+            day3: '📍 3일차: 호텔 → 바구니배 → 호이안 구시가지 → 귀환',
+            day4: '📍 4일차: 미케비치 → 박물관 → 사랑의 부두 → 3D미술관 → 영응사 → 공항 → 인천',
+            day5: '📍 5일차: 인천 도착'
         };
         const routes = {
-            all: {
-                p: ['icn','dad'],
-                zoom: ['icn','dad'],
-                maxZoom: 5,
-                l: [
-                    { pts:[spots.icn.c, spots.dad.c], c:'#004098', dash:'10,8', weight:3, label:'KE459 출국' },
-                    { pts:[spots.dad.c, spots.icn.c], c:'#64748b', dash:'10,8', weight:3, label:'KE460 귀국' }
-                ]
-            },
-            day1: {
-                p: ['dad','hotel'],
-                zoom: ['dad','hotel'],
-                maxZoom: 13,
-                l: [{ pts:[spots.dad.c, spots.hotel.c], c:'#0ea5e9', weight:4 }]
-            },
-            day2: {
-                p: ['hotel','mykhe','museum','lovebridge','cathedral','art3d','tower','hanriver'],
-                zoom: ['hotel','mykhe','museum','cathedral','art3d','tower'],
-                maxZoom: 13,
-                l: [{ pts:[spots.hotel.c, spots.mykhe.c, spots.museum.c, spots.lovebridge.c, spots.cathedral.c, spots.art3d.c, spots.tower.c, spots.hanriver.c, spots.hotel.c], c:'#10b981', weight:4 }]
-            },
-            day3: {
-                p: ['hotel','marble','basket','hoian'],
-                zoom: ['hotel','marble','basket','hoian'],
-                maxZoom: 11,
-                l: [{ pts:[spots.hotel.c, spots.marble.c, spots.basket.c, spots.hoian.c, spots.hotel.c], c:'#f59e0b', weight:4 }]
-            },
-            day4: {
-                p: ['hotel','banahills','linhung','dad','icn'],
-                zoom: ['hotel','banahills','linhung','dad'],
-                maxZoom: 11,
-                l: [
-                    { pts:[spots.hotel.c, spots.banahills.c, spots.linhung.c, spots.dad.c], c:'#8b5cf6', weight:4 },
-                    { pts:[spots.dad.c, spots.icn.c], c:'#004098', dash:'10,8', weight:3, label:'KE460 귀국' }
-                ]
-            },
-            day5: {
-                p: ['icn'],
-                zoom: ['icn'],
-                maxZoom: 10,
-                l: [{ pts:[spots.dad.c, spots.icn.c], c:'#004098', dash:'10,8', weight:3, label:'KE460 도착' }]
-            }
+            all: { p:['icn','dad'], zoom:['icn','dad'], maxZoom:5, segs:[
+                {from:'icn', to:'dad', mode:'flight', c:'#004098', label:'KE459 출국'},
+                {from:'dad', to:'icn', mode:'flight', c:'#64748b', label:'KE460 귀국'}
+            ]},
+            day1: { p:['icn','dad','hotel'], zoom:['dad','hotel'], maxZoom:12, segs:[
+                {from:'icn', to:'dad', mode:'flight', c:'#004098', label:'KE459 출국'},
+                {from:'dad', to:'hotel', mode:'bus', c:'#0ea5e9'}
+            ]},
+            day2: { p:['hotel','banahills','cruise'], zoom:['hotel','banahills','cruise'], maxZoom:11, segs:[
+                {from:'hotel', to:'banahills', mode:'bus', c:'#4338ca'},
+                {from:'banahills', to:'cruise', mode:'bus', c:'#4338ca'},
+                {from:'cruise', to:'hotel', mode:'bus', c:'#4338ca'}
+            ]},
+            day3: { p:['hotel','basket','hoian'], zoom:['hotel','basket','hoian'], maxZoom:11, segs:[
+                {from:'hotel', to:'basket', mode:'bus', c:'#c2410c'},
+                {from:'basket', to:'hoian', mode:'bus', c:'#c2410c'},
+                {from:'hoian', to:'hotel', mode:'bus', c:'#c2410c'}
+            ]},
+            day4: { p:['hotel','mykhe','museum','lovebridge','art3d','sontra','dad','icn'], zoom:['hotel','mykhe','museum','lovebridge','art3d','sontra','dad'], maxZoom:12, segs:[
+                {from:'hotel', to:'mykhe', mode:'bus', c:'#0ea5e9'},
+                {from:'mykhe', to:'museum', mode:'bus', c:'#0ea5e9'},
+                {from:'museum', to:'lovebridge', mode:'bus', c:'#0ea5e9'},
+                {from:'lovebridge', to:'art3d', mode:'bus', c:'#0ea5e9'},
+                {from:'art3d', to:'sontra', mode:'bus', c:'#0ea5e9'},
+                {from:'sontra', to:'dad', mode:'bus', c:'#0ea5e9'},
+                {from:'dad', to:'icn', mode:'flight', c:'#64748b', label:'KE460 귀국'}
+            ]},
+            day5: { p:['dad','icn'], zoom:['icn','dad'], maxZoom:5, segs:[
+                {from:'dad', to:'icn', mode:'flight', c:'#64748b', label:'KE460 귀국'}
+            ]}
         };
+
+        function isMobileMap(){ return window.matchMedia('(max-width:768px)').matches; }
+        function segMs(mode, routeKey){
+            const m = isMobileMap();
+            const allView = routeKey === 'all';
+            if(mode === 'flight') return m ? (allView ? 3600 : 5000) : (allView ? 1800 : 2500);
+            return m ? (allView ? 2800 : 4200) : (allView ? 1400 : 2100);
+        }
+        function easeInOut(p){ return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
+        function bearingDeg(a, b){
+            const lat1 = (a.lat ?? a[0]) * Math.PI / 180;
+            const lat2 = (b.lat ?? b[0]) * Math.PI / 180;
+            const dLng = ((b.lng ?? b[1]) - (a.lng ?? a[1])) * Math.PI / 180;
+            const y = Math.sin(dLng) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+            return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+        }
+        function headingParts(mode, bearing){
+            const nose = mode === 'flight' ? 45 : 270;
+            let rot = ((bearing - nose + 540) % 360) - 180;
+            let flip = 1;
+            if(mode !== 'flight' && Math.abs(rot) > 90){
+                flip = -1;
+                rot += rot > 0 ? -180 : 180;
+            }
+            return { rot, flip };
+        }
+        function travelerIcon(mode, bearing){
+            const emoji = mode === 'flight' ? '✈️' : '🚌';
+            const { rot, flip } = headingParts(mode, bearing);
+            return L.divIcon({
+                className: 'traveler-icon',
+                html: `<div class="map-vehicle traveler-rot" style="transform:rotate(${rot}deg)"><span class="traveler-flip" style="display:inline-block;transform:scaleX(${flip})">${emoji}</span></div>`,
+                iconSize: [44, 44],
+                iconAnchor: [22, 22]
+            });
+        }
+        function densifyLine(a, b, n){
+            const path = [];
+            for(let i = 0; i <= n; i++){
+                const t = i / n;
+                path.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+            }
+            return path;
+        }
+        function latLngAlong(latlngs, t){
+            if(!latlngs.length) return null;
+            const pts = latlngs.map(p => L.latLng(p));
+            if(t <= 0) return pts[0];
+            if(t >= 1) return pts[pts.length - 1];
+            let total = 0;
+            const segs = [];
+            for(let i = 0; i < pts.length - 1; i++){
+                const d = pts[i].distanceTo(pts[i + 1]);
+                segs.push({ a: pts[i], b: pts[i + 1], d });
+                total += d;
+            }
+            if(!total) return pts[0];
+            let remain = total * t;
+            for(const s of segs){
+                if(remain <= s.d || s.d === 0){
+                    const r = s.d ? remain / s.d : 0;
+                    return L.latLng(s.a.lat + (s.b.lat - s.a.lat) * r, s.a.lng + (s.b.lng - s.a.lng) * r);
+                }
+                remain -= s.d;
+            }
+            return pts[pts.length - 1];
+        }
+        function lookAhead(latlngs, t){
+            return { a: latLngAlong(latlngs, Math.max(0, t - 0.015)), b: latLngAlong(latlngs, Math.min(1, t + 0.03)) };
+        }
+        async function roadPath(a, b){
+            const key = a.join(',')+'|'+b.join(',');
+            if(osrmCache[key]) return osrmCache[key];
+            try {
+                const url = `https://router.project-osrm.org/route/v1/driving/${a[1]},${a[0]};${b[1]},${b[0]}?overview=full&geometries=geojson`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if(data.code === 'Ok' && data.routes && data.routes[0]){
+                    const path = data.routes[0].geometry.coordinates.map(([lng,lat]) => [lat,lng]);
+                    osrmCache[key] = path;
+                    return path;
+                }
+            } catch(e) {}
+            return [a, b];
+        }
+        function setMapLeg(fromT, toT){
+            const el = document.getElementById('map-leg');
+            if(!el) return;
+            el.style.display = 'block';
+            el.textContent = fromT + ' → ' + toT;
+        }
+        function pinSpot(key){
+            const s = spots[key];
+            if(!s) return;
+            const htmlStr = `<div class="map-marker-bubble" style="background:${s.col};width:32px;height:32px;animation:popIn 0.5s forwards;color:white;font-size:14px;">${s.i}</div>`;
+            L.marker(s.c, { icon: L.divIcon({ className: '', html: htmlStr, iconSize:[32,32], iconAnchor:[16,16] }) })
+                .bindTooltip('<b>'+s.t+'</b>', { direction:'top' })
+                .addTo(layerGroup);
+        }
+        function moveVehicle(ll, mode, bearing){
+            const { rot, flip } = headingParts(mode, bearing);
+            if(!vehicleMarker){
+                vehicleMode = mode;
+                vehicleMarker = L.marker(ll, { icon: travelerIcon(mode, bearing), zIndexOffset: 1200 }).addTo(layerGroup);
+                return;
+            }
+            vehicleMarker.setLatLng(ll);
+            if(vehicleMode !== mode){
+                vehicleMode = mode;
+                vehicleMarker.setIcon(travelerIcon(mode, bearing));
+                return;
+            }
+            const el = vehicleMarker.getElement();
+            const wrap = el && el.querySelector('.traveler-rot');
+            const span = el && el.querySelector('.traveler-flip');
+            if(wrap) wrap.style.transform = `rotate(${rot}deg)`;
+            if(span) span.style.transform = `scaleX(${flip})`;
+        }
+        function animatePath(path, color, dash, mode, ms, seq){
+            return new Promise(resolve => {
+                const pl = L.polyline(dash ? [path[0]] : path, { color, weight: mode==='flight'?3:4, opacity:0.9, dashArray: dash || null }).addTo(layerGroup);
+                const start = performance.now();
+                function frame(now){
+                    if(seq !== mapDrawSeq){ resolve(); return; }
+                    const p = Math.min(1, (now - start) / ms);
+                    const t = easeInOut(p);
+                    const ll = latLngAlong(path, t);
+                    const hd = lookAhead(path, t);
+                    if(ll && hd.a && hd.b) moveVehicle(ll, mode, bearingDeg(hd.a, hd.b));
+                    if(dash && ll){
+                        const n = Math.max(1, Math.floor(t * (path.length - 1)));
+                        const pts = path.slice(0, n + 1);
+                        pts.push([ll.lat, ll.lng]);
+                        pl.setLatLngs(pts);
+                    } else if(pl._path){
+                        const len = pl._path.getTotalLength();
+                        pl._path.style.strokeDasharray = String(len);
+                        pl._path.style.strokeDashoffset = String(len * (1 - t));
+                    }
+                    if(p < 1) requestAnimationFrame(frame);
+                    else { pl.setLatLngs(path); resolve(); }
+                }
+                requestAnimationFrame(frame);
+            });
+        }
 
         function initMap() {
             if(map || typeof L === 'undefined') return;
             map = L.map('map', { scrollWheelZoom: false });
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; CARTO' }).addTo(map);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles © Esri'
+            }).addTo(map);
             layerGroup = L.layerGroup().addTo(map);
-            changeMapAndTab('all');
+            const startKey = getTodayDayKey() || (isMobileMap() ? 'day1' : 'all');
+            changeMapAndTab(startKey);
         }
 
-        function changeMapAndTab(dayId) {
-            if(dayId !== 'all') {
-                document.querySelectorAll('.schedule-content').forEach(el => el.classList.add('hidden'));
-                const t = document.getElementById(dayId);
-                if(t) { t.classList.remove('hidden'); t.classList.add('animate-fade-in-up'); }
+        async function changeMapAndTab(dayId) {
+            if(dayId !== 'all') showDayTab(dayId);
+            document.querySelectorAll('.map-tab-btn').forEach(btn => {
+                btn.classList.remove('active','bg-tm','text-white','border-tm','shadow-sm');
+                btn.classList.add('bg-white','text-slate-600','border-slate-300');
+            });
+            const mapBtn = document.querySelector(`.map-tab-btn[onclick="changeMapAndTab('${dayId}')"]`);
+            if(mapBtn){
+                mapBtn.classList.add('active','bg-tm','text-white','border-tm','shadow-sm');
+                mapBtn.classList.remove('bg-white','text-slate-600','border-slate-300');
             }
-            document.querySelectorAll('.map-tab-btn').forEach(btn => { btn.classList.remove('active','bg-tm','text-white','border-tm','shadow-sm'); btn.classList.add('bg-white','text-slate-600','border-slate-300'); });
-            document.querySelectorAll('.sched-tab').forEach(btn => { btn.classList.remove('text-tm','border-b-2','border-tm'); btn.classList.add('text-slate-500'); });
-
-            const mapDay = dayId === 'day5' ? 'day4' : dayId;
-            const schedDay = dayId === 'all' ? 'day1' : dayId;
-            document.querySelectorAll(`button[onclick="changeMapAndTab('${mapDay}')"]`).forEach(btn => {
-                if(btn.classList.contains('map-tab-btn')) { btn.classList.add('active','bg-tm','text-white','border-tm','shadow-sm'); btn.classList.remove('bg-white','text-slate-600','border-slate-300'); }
-            });
-            document.querySelectorAll(`button[onclick="changeMapAndTab('${schedDay}')"]`).forEach(btn => {
-                if(btn.classList.contains('sched-tab')) { btn.classList.add('text-tm','border-b-2','border-tm'); btn.classList.remove('text-slate-500'); }
-            });
-
             if(!map || !layerGroup) return;
+            const seq = ++mapDrawSeq;
             layerGroup.clearLayers();
-
+            vehicleMarker = null;
+            vehicleMode = null;
             const route = routes[dayId] || routes.all;
             const hintEl = document.getElementById('map-hint');
             if (hintEl) hintEl.innerText = mapHints[dayId] || mapHints.all;
-
             let bounds = L.latLngBounds();
-            const zoomKeys = route.zoom || route.p;
-
-            route.l.forEach(line => {
-                const opts = { color: line.c, weight: line.weight || 4, opacity: 0.85 };
-                if (line.dash) opts.dashArray = line.dash;
-                const pl = L.polyline(line.pts, opts).addTo(layerGroup);
-                if (line.label) pl.bindTooltip('<b>'+line.label+'</b>', { sticky: true, direction: 'center' });
-                setTimeout(() => {
-                    if(pl._path) {
-                        const len = pl._path.getTotalLength();
-                        pl._path.style.strokeDasharray = line.dash ? line.dash : len;
-                        pl._path.style.strokeDashoffset = len;
-                        pl._path.getBoundingClientRect();
-                        pl._path.style.transition = "stroke-dashoffset 2s ease-in-out";
-                        pl._path.style.strokeDashoffset = "0";
-                    }
-                }, 50);
-            });
-
-            route.p.forEach((key, idx) => {
-                const s = spots[key];
-                const htmlStr = `<div class="map-marker-bubble" style="background:${s.col};width:32px;height:32px;animation:popIn 0.5s forwards;animation-delay:${idx*0.15}s;color:white;font-size:14px;">${s.i}</div>`;
-                L.marker(s.c, { icon: L.divIcon({ className: '', html: htmlStr, iconSize: [32,32], iconAnchor: [16,16] }) })
-                 .bindTooltip('<b>'+s.t+'</b>', { direction: 'top' })
-                 .addTo(layerGroup);
-            });
-
-            zoomKeys.forEach(key => bounds.extend(spots[key].c));
-            if (layerGroup.getLayers().length > 0) {
+            (route.zoom || route.p).forEach(key => { if(spots[key]) bounds.extend(spots[key].c); });
+            map.fitBounds(bounds, { padding: [40, 40], maxZoom: route.maxZoom || 12 });
+            setTimeout(() => map.invalidateSize(), 300);
+            const first = route.p[0];
+            if(first) pinSpot(first);
+            for(const seg of route.segs){
+                if(seq !== mapDrawSeq) return;
+                const a = spots[seg.from], b = spots[seg.to];
+                if(!a || !b) continue;
+                setMapLeg(a.t, b.t);
+                const path = seg.mode === 'flight' ? densifyLine(a.c, b.c, 72) : await roadPath(a.c, b.c);
+                if(seq !== mapDrawSeq) return;
+                path.forEach(pt => bounds.extend(pt));
                 map.fitBounds(bounds, { padding: [40, 40], maxZoom: route.maxZoom || 12 });
-                setTimeout(() => map.invalidateSize(), 300);
+                await animatePath(path, seg.c, seg.mode==='flight' ? '10,8' : null, seg.mode, segMs(seg.mode, dayId), seq);
+                if(seq !== mapDrawSeq) return;
+                pinSpot(seg.to);
             }
-            if(window.innerWidth < 1024 && dayId !== 'all') document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' });
+            const leg = document.getElementById('map-leg');
+            if(leg && seq === mapDrawSeq) leg.style.display = 'none';
         }
-        window.addEventListener('load', initMap);
+        const io = new IntersectionObserver((entries)=>{
+            if(entries[0].isIntersecting) { initMap(); io.disconnect(); }
+        }, { threshold: 0.1 });
+        io.observe(document.getElementById('map-section'));
+        initEventDayUI();
+
 
         async function initLiveWidgets() {
             const wEl = document.getElementById('weekly-forecast');
@@ -1395,6 +1670,7 @@
             '여권 (유효기간 6개월 이상 필수 확인)',
             '접이식 우산 또는 휴대용 우비 (우기 대비)',
             '여름용 옷 + 얇은 긴팔 가디건 (에어컨/비 대비)',
+            '수영복·수건 (3일차 호텔 수영장 물놀이)',
             '모기/벌레 기피제 (바구니배 탑승 시)',
             '편안한 운동화 (바나힐, 호이안 도보)',
             '개인 상비약 (멀미약, 지사제, 방수밴드)',
