@@ -41,13 +41,40 @@
         }
         @media(max-width:768px) { .hero-bg { background-attachment: scroll; } }
 
-        #map-wrap { position: relative; }
-        #map { height: 360px; width: 100%; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1); z-index: 10; }
-        @media(min-width:1024px) { #map { height: 500px; } }
-        #map-leg { position: absolute; top: 12px; left: 12px; z-index: 500; display: none; background: rgba(255,255,255,.94); border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 800; color: var(--tm); box-shadow: 0 4px 12px rgba(15,23,42,.12); pointer-events: none; max-width: calc(100% - 24px); }
-        .traveler-icon { background: none !important; border: none !important; }
-        .map-vehicle { font-size: 28px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(15,23,42,.35)); }
-        .map-marker-bubble { background: #fff; border-radius: 50%; box-shadow: 0 4px 6px rgba(0,0,0,.3); border: 2px solid #fff; display: flex; align-items: center; justify-content: center; opacity: 0; }
+        #map-wrap { position: relative; z-index: 0; }
+        #map { height: 500px; width: 100%; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1); z-index: 10; }
+        @media(min-width:1024px) { #map { height: 600px; } }
+        .custom-icon { background: transparent; border: none; }
+        .map-pin-wrap { display: flex; flex-direction: column; align-items: center; }
+        .map-pin-dot {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; color: #fff;
+            border: 2px solid rgba(255,255,255,0.95);
+            box-shadow: 0 8px 16px rgba(15,23,42,0.18);
+        }
+        .map-pin-label {
+            margin-top: 3px;
+            background: rgba(255,255,255,0.96);
+            color: #0f172a;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.2;
+            padding: 2px 6px;
+            border-radius: 6px;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(15,23,42,0.12);
+        }
+        .map-bus {
+            font-size: 22px;
+            line-height: 1;
+            filter: drop-shadow(0 4px 8px rgba(15,23,42,0.35));
+            transform-origin: center center;
+            display: inline-block;
+        }
+        #map-distance { min-width: 7.75rem; max-width: 10.5rem; }
+        body.event-day section { scroll-margin-top: 112px; }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         .leaflet-tooltip { font-family: 'Noto Sans KR', sans-serif !important; font-weight: 700 !important; color: #1e293b !important; border-radius: 8px !important; border: none !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) !important; padding: 4px 10px !important; }
 
@@ -401,22 +428,31 @@
         <section id="map-section" class="py-16 bg-white border-t border-slate-200">
             <div class="container mx-auto px-4 max-w-7xl">
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-slate-800">여정 동선 지도</h2>
-                    <p class="text-sm text-slate-500 mt-2">전체 탭에서는 항공 노선(인천↔다낭)을, 일자별 탭에서는 현지 동선을 확대하여 표시합니다.</p>
+                    <span class="text-tm font-black tracking-widest text-xs uppercase">ANIMATED ROUTING MAP</span>
+                    <h2 class="text-3xl font-bold text-slate-800 tracking-tight mt-2">한눈에 보는 탐방 동선</h2>
+                    <p class="text-sm text-slate-500 mt-2">일자별 버튼을 누르면 실제 도로 동선이 순서대로 그려집니다.</p>
                 </div>
-                <div class="flex flex-wrap gap-2 justify-center mb-6">
-                    <button onclick="changeMapAndTab('all')" class="map-tab-btn active px-5 py-2 rounded-full text-sm font-bold border bg-tm text-white border-tm shadow-sm transition-colors">전체</button>
-                    <button onclick="changeMapAndTab('day1')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">1일차 도착 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#0ea5e9] ml-1"></span></button>
-                    <button onclick="changeMapAndTab('day2')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">2일차 바나힐 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#10b981] ml-1"></span></button>
-                    <button onclick="changeMapAndTab('day3')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">3일차 호이안 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#f59e0b] ml-1"></span></button>
-                    <button onclick="changeMapAndTab('day4')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">4일차 시내·귀국 <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#8b5cf6] ml-1"></span></button>
+                <div class="flex flex-wrap gap-2 justify-center mb-6" id="map-controls">
+                    <button onclick="changeMapAndTab('all')" class="map-tab-btn active px-5 py-2 rounded-full text-sm font-bold border bg-tm text-white border-tm shadow-sm transition-colors">전체 여정</button>
+                    <button onclick="changeMapAndTab('day1')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">1일차(출국)</button>
+                    <button onclick="changeMapAndTab('day2')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">2일차(바나산)</button>
+                    <button onclick="changeMapAndTab('day3')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">3일차(호이안)</button>
+                    <button onclick="changeMapAndTab('day4')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">4일차(시내·귀국)</button>
                 </div>
-                <div id="map-wrap" class="relative">
+                <div id="map-wrap" class="relative max-w-5xl mx-auto border border-slate-200 rounded-2xl p-1 shadow-lg bg-white">
                     <div id="map"></div>
-                    <div id="map-leg"></div>
+                    <div id="map-status" class="absolute top-4 left-4 z-[400] bg-white/90 backdrop-blur px-3 py-1.5 rounded-xl shadow font-bold text-xs text-slate-700 pointer-events-none max-w-[58%]">
+                        <i class="fa-solid fa-route text-tm mr-1"></i><span id="map-status-text">실제 도로 동선</span>
+                    </div>
+                    <div id="map-distance" class="hidden absolute top-4 right-4 z-[400] bg-white/90 backdrop-blur px-3 py-2 rounded-xl shadow pointer-events-none text-right">
+                        <p class="text-[10px] font-bold text-slate-400 tracking-wide">대략 이동</p>
+                        <p id="map-distance-leg" class="font-bold text-xs text-slate-800 leading-snug mt-0.5"></p>
+                        <p id="map-distance-time" class="font-black text-sm text-tm mt-0.5"></p>
+                        <p id="map-distance-km" class="text-[10px] font-bold text-slate-500 mt-0.5"></p>
+                    </div>
                 </div>
                 <p id="map-hint" class="text-center text-xs text-tm font-bold mt-4">✈️ 전체 보기: 대한항공 직항 노선 (KE459 · KE460)</p>
-                <p class="text-center text-xs text-slate-400 mt-1">※ 상기 지도는 주요 랜드마크 기준이며 실제 세부 이동과 다를 수 있습니다.</p>
+                <p class="text-center text-xs text-slate-400 mt-2">※ 교통·현지 상황에 따라 순서 및 동선이 달라질 수 있습니다.</p>
             </div>
         </section>
 
@@ -1323,227 +1359,332 @@
             if (dayKey) showDayTab(dayKey);
         }
 
-        let map, layerGroup, vehicleMarker = null, vehicleMode = null, mapDrawSeq = 0;
+        let map, mapLayers = [], mapDrawSeq = 0, activeMover = null;
         const osrmCache = {};
         const spots = {
-            icn: { c:[37.4602, 126.4407], t:'인천공항', col:'#64748b', i:'✈️' },
-            dad: { c:[16.0439, 108.1990], t:'다낭 공항', col:'#0ea5e9', i:'🛬' },
-            hotel: { c:[16.0532, 108.2435], t:'무엉탄 럭셔리', col:'#004098', i:'🏨' },
-            banahills: { c:[15.9977, 107.9881], t:'바나산·골든브릿지', col:'#4338ca', i:'🚠' },
-            cruise: { c:[16.0715, 108.2240], t:'한강 유람선', col:'#3b82f6', i:'⛴️' },
-            basket: { c:[15.8750, 108.3670], t:'바구니배', col:'#d97706', i:'🚣' },
-            hoian: { c:[15.8801, 108.3380], t:'호이안 구시가지', col:'#c2410c', i:'🏮' },
-            mykhe: { c:[16.0600, 108.2470], t:'미케비치', col:'#0ea5e9', i:'🏖️' },
-            museum: { c:[16.0736, 108.2209], t:'다낭박물관', col:'#0ea5e9', i:'🏛️' },
-            lovebridge: { c:[16.0615, 108.2230], t:'사랑의 부두', col:'#ec4899', i:'💕' },
-            art3d: { c:[16.0477, 108.2475], t:'아트 인 파라다이스', col:'#8b5cf6', i:'🎨' },
-            sontra: { c:[16.1005, 108.2774], t:'영응사', col:'#4338ca', i:'🏯' }
+            icn: { c:[37.4602, 126.4407], t:'인천공항 T2', s:'인천', col:'#64748b', i:'✈️' },
+            dad: { c:[16.0439, 108.1990], t:'다낭국제공항', s:'다낭공항', col:'#0ea5e9', i:'🛬' },
+            hotel: { c:[16.0475, 108.2480], t:'무엉탄 럭셔리 다낭', s:'호텔', col:'#004098', i:'🏨' },
+            bana: { c:[16.0364, 108.0208], t:'바나산 케이블카', s:'바나산', col:'#4338ca', i:'🚠' },
+            solhyang: { c:[16.0472, 108.2412], t:'솔향 (한식 석식)', s:'솔향', col:'#f97316', i:'🍲' },
+            cruise: { c:[16.0614, 108.2275], t:'한강 유람선', s:'유람선', col:'#3b82f6', i:'⛴️' },
+            basket: { c:[15.8769, 108.3515], t:'깜탄 바구니배', s:'바구니배', col:'#d97706', i:'🚣' },
+            gung: { c:[15.8778, 108.3295], t:'궁식당 (소불고기)', s:'궁식당', col:'#f97316', i:'🍲' },
+            hoian: { c:[15.8772, 108.3260], t:'호이안 구시가지', s:'호이안', col:'#c2410c', i:'🏮' },
+            morning: { c:[15.8774, 108.3282], t:'모닝글로리', s:'모닝글로리', col:'#db2777', i:'🍽️' },
+            mykhe: { c:[16.0516, 108.2477], t:'미케비치', s:'미케비치', col:'#0ea5e9', i:'🏖️' },
+            museum: { c:[16.0606, 108.2231], t:'다낭박물관', s:'박물관', col:'#0ea5e9', i:'🏛️' },
+            lovebridge: { c:[16.0614, 108.2267], t:'사랑의 부두', s:'사랑의부두', col:'#ec4899', i:'💕' },
+            art3d: { c:[16.0478, 108.2475], t:'아트 인 파라다이스', s:'3D미술관', col:'#8b5cf6', i:'🎨' },
+            madamlan: { c:[16.0672, 108.2235], t:'마담란 (현지식)', s:'마담란', col:'#f97316', i:'🍜' },
+            sontra: { c:[16.1004, 108.2777], t:'영응사 (손짜반도)', s:'영응사', col:'#4338ca', i:'🏯' },
+            tower: { c:[16.0698, 108.2240], t:'다낭타워 (스테이크)', s:'다낭타워', col:'#be123c', i:'🌃' }
         };
         const mapHints = {
-            all: '✈️ 전체 보기: 대한항공 직항 노선 (KE459 · KE460)',
-            day1: '📍 1일차: 인천 → 다낭 공항 도착 후 확대하여 호텔 이동',
-            day2: '📍 2일차: 호텔 → 바나산 → 한강유람선 → 호텔',
-            day3: '📍 3일차: 호텔 → 바구니배 → 호이안 구시가지 → 귀환',
-            day4: '📍 4일차: 미케비치 → 박물관 → 사랑의 부두 → 3D미술관 → 영응사 → 공항 → 인천',
-            day5: '📍 5일차: 인천 도착'
+            all: '전체 여정 — 인천 출국부터 귀국까지 항공(점선)과 실제 도로 동선',
+            day1: '1일차 — 인천 KE459 → 다낭공항 → 무엉탄 럭셔리',
+            day2: '2일차 — 호텔 → 바나산 케이블카 → 솔향 → 한강유람선 → 호텔',
+            day3: '3일차 — 호텔 → 바구니배 → 궁식당 → 호이안 → 모닝글로리 → 호텔',
+            day4: '4일차 — 미케비치 → 박물관 → 사랑의 부두 → 3D미술관 → 마담란 → 영응사 → 다낭타워 → 공항 → 인천',
+            day5: '5일차 — 다낭 KE460 → 인천 도착'
         };
         const routes = {
-            all: { p:['icn','dad'], zoom:['icn','dad'], maxZoom:5, segs:[
-                {from:'icn', to:'dad', mode:'flight', c:'#004098', label:'KE459 출국'},
-                {from:'dad', to:'icn', mode:'flight', c:'#64748b', label:'KE460 귀국'}
-            ]},
-            day1: { p:['icn','dad','hotel'], zoom:['dad','hotel'], maxZoom:12, segs:[
-                {from:'icn', to:'dad', mode:'flight', c:'#004098', label:'KE459 출국'},
-                {from:'dad', to:'hotel', mode:'bus', c:'#0ea5e9'}
-            ]},
-            day2: { p:['hotel','banahills','cruise'], zoom:['hotel','banahills','cruise'], maxZoom:11, segs:[
-                {from:'hotel', to:'banahills', mode:'bus', c:'#4338ca'},
-                {from:'banahills', to:'cruise', mode:'bus', c:'#4338ca'},
-                {from:'cruise', to:'hotel', mode:'bus', c:'#4338ca'}
-            ]},
-            day3: { p:['hotel','basket','hoian'], zoom:['hotel','basket','hoian'], maxZoom:11, segs:[
-                {from:'hotel', to:'basket', mode:'bus', c:'#c2410c'},
-                {from:'basket', to:'hoian', mode:'bus', c:'#c2410c'},
-                {from:'hoian', to:'hotel', mode:'bus', c:'#c2410c'}
-            ]},
-            day4: { p:['hotel','mykhe','museum','lovebridge','art3d','sontra','dad','icn'], zoom:['hotel','mykhe','museum','lovebridge','art3d','sontra','dad'], maxZoom:12, segs:[
-                {from:'hotel', to:'mykhe', mode:'bus', c:'#0ea5e9'},
-                {from:'mykhe', to:'museum', mode:'bus', c:'#0ea5e9'},
-                {from:'museum', to:'lovebridge', mode:'bus', c:'#0ea5e9'},
-                {from:'lovebridge', to:'art3d', mode:'bus', c:'#0ea5e9'},
-                {from:'art3d', to:'sontra', mode:'bus', c:'#0ea5e9'},
-                {from:'sontra', to:'dad', mode:'bus', c:'#0ea5e9'},
-                {from:'dad', to:'icn', mode:'flight', c:'#64748b', label:'KE460 귀국'}
-            ]},
-            day5: { p:['dad','icn'], zoom:['icn','dad'], maxZoom:5, segs:[
-                {from:'dad', to:'icn', mode:'flight', c:'#64748b', label:'KE460 귀국'}
-            ]}
+            all: {
+                zoom: ['icn','dad','hotel','bana','hoian'],
+                maxZoom: 5,
+                legs: [
+                    { from:'icn', to:'dad', mode:'flight', color:'#004098', label:'KE459 출국' },
+                    { from:'dad', to:'hotel', mode:'bus', color:'#004098' },
+                    { from:'hotel', to:'bana', mode:'bus', color:'#4338ca' },
+                    { from:'bana', to:'solhyang', mode:'bus', color:'#4338ca' },
+                    { from:'solhyang', to:'cruise', mode:'bus', color:'#4338ca' },
+                    { from:'cruise', to:'hotel', mode:'bus', color:'#4338ca' },
+                    { from:'hotel', to:'basket', mode:'bus', color:'#c2410c' },
+                    { from:'basket', to:'gung', mode:'bus', color:'#c2410c' },
+                    { from:'gung', to:'hoian', mode:'bus', color:'#c2410c' },
+                    { from:'hoian', to:'morning', mode:'bus', color:'#c2410c' },
+                    { from:'morning', to:'hotel', mode:'bus', color:'#c2410c' },
+                    { from:'hotel', to:'mykhe', mode:'bus', color:'#0ea5e9' },
+                    { from:'mykhe', to:'museum', mode:'bus', color:'#0ea5e9' },
+                    { from:'museum', to:'lovebridge', mode:'bus', color:'#0ea5e9' },
+                    { from:'lovebridge', to:'art3d', mode:'bus', color:'#0ea5e9' },
+                    { from:'art3d', to:'madamlan', mode:'bus', color:'#0ea5e9' },
+                    { from:'madamlan', to:'sontra', mode:'bus', color:'#0ea5e9' },
+                    { from:'sontra', to:'tower', mode:'bus', color:'#0ea5e9' },
+                    { from:'tower', to:'dad', mode:'bus', color:'#0ea5e9' },
+                    { from:'dad', to:'icn', mode:'flight', color:'#64748b', label:'KE460 귀국' }
+                ]
+            },
+            day1: {
+                zoom: ['dad','hotel'],
+                maxZoom: 12,
+                legs: [
+                    { from:'icn', to:'dad', mode:'flight', color:'#004098', label:'KE459 출국' },
+                    { from:'dad', to:'hotel', mode:'bus', color:'#004098' }
+                ]
+            },
+            day2: {
+                zoom: ['hotel','bana','cruise'],
+                maxZoom: 11,
+                legs: [
+                    { from:'hotel', to:'bana', mode:'bus', color:'#4338ca' },
+                    { from:'bana', to:'solhyang', mode:'bus', color:'#4338ca' },
+                    { from:'solhyang', to:'cruise', mode:'bus', color:'#4338ca' },
+                    { from:'cruise', to:'hotel', mode:'bus', color:'#4338ca' }
+                ]
+            },
+            day3: {
+                zoom: ['hotel','basket','hoian'],
+                maxZoom: 11,
+                legs: [
+                    { from:'hotel', to:'basket', mode:'bus', color:'#c2410c' },
+                    { from:'basket', to:'gung', mode:'bus', color:'#c2410c' },
+                    { from:'gung', to:'hoian', mode:'bus', color:'#c2410c' },
+                    { from:'hoian', to:'morning', mode:'bus', color:'#c2410c' },
+                    { from:'morning', to:'hotel', mode:'bus', color:'#c2410c' }
+                ]
+            },
+            day4: {
+                zoom: ['hotel','mykhe','museum','art3d','sontra','dad'],
+                maxZoom: 12,
+                legs: [
+                    { from:'hotel', to:'mykhe', mode:'bus', color:'#0ea5e9' },
+                    { from:'mykhe', to:'museum', mode:'bus', color:'#0ea5e9' },
+                    { from:'museum', to:'lovebridge', mode:'bus', color:'#0ea5e9' },
+                    { from:'lovebridge', to:'art3d', mode:'bus', color:'#0ea5e9' },
+                    { from:'art3d', to:'madamlan', mode:'bus', color:'#0ea5e9' },
+                    { from:'madamlan', to:'sontra', mode:'bus', color:'#0ea5e9' },
+                    { from:'sontra', to:'tower', mode:'bus', color:'#0ea5e9' },
+                    { from:'tower', to:'dad', mode:'bus', color:'#0ea5e9' },
+                    { from:'dad', to:'icn', mode:'flight', color:'#64748b', label:'KE460 귀국' }
+                ]
+            },
+            day5: {
+                zoom: ['icn','dad'],
+                maxZoom: 5,
+                legs: [
+                    { from:'dad', to:'icn', mode:'flight', color:'#64748b', label:'KE460 귀국' }
+                ]
+            }
         };
 
         function isMobileMap(){ return window.matchMedia('(max-width:768px)').matches; }
-        function segMs(mode, routeKey){
-            const m = isMobileMap();
-            const allView = routeKey === 'all';
-            if(mode === 'flight') return m ? (allView ? 3600 : 5000) : (allView ? 1800 : 2500);
-            return m ? (allView ? 2800 : 4200) : (allView ? 1400 : 2100);
+        function setMapStatus(text){
+            const el = document.getElementById('map-status-text');
+            if (el) el.textContent = text;
         }
-        function easeInOut(p){ return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
-        function bearingDeg(a, b){
-            const lat1 = (a.lat ?? a[0]) * Math.PI / 180;
-            const lat2 = (b.lat ?? b[0]) * Math.PI / 180;
-            const dLng = ((b.lng ?? b[1]) - (a.lng ?? a[1])) * Math.PI / 180;
+        function pathMeters(path){
+            let total = 0;
+            for (let i = 1; i < path.length; i++) total += L.latLng(path[i - 1]).distanceTo(L.latLng(path[i]));
+            return total;
+        }
+        function formatApproxKm(meters){
+            if (!meters || meters <= 0) return '';
+            if (meters < 800) return '약 ' + Math.round(meters / 100) * 100 + 'm';
+            const km = meters / 1000;
+            if (km < 10) return '약 ' + (Math.round(km * 2) / 2) + 'km';
+            if (km < 50) return '약 ' + Math.round(km) + 'km';
+            if (km < 400) return '약 ' + Math.round(km / 5) * 5 + 'km';
+            return '약 ' + Math.round(km / 50) * 50 + 'km';
+        }
+        function estimateSeconds(meters, mode){
+            if (!meters || meters <= 0) return 0;
+            if (mode === 'flight') return meters / (800 / 3.6);
+            return meters / (25 / 3.6);
+        }
+        function groupTravelSeconds(seconds, mode){
+            if (!seconds || seconds <= 0) return 0;
+            if (mode === 'flight') return seconds;
+            return Math.max(12 * 60, seconds * 1.4 + 8 * 60);
+        }
+        function formatApproxTime(seconds){
+            if (!seconds || seconds <= 0) return '';
+            const min = Math.max(1, Math.ceil(seconds / 60));
+            if (min < 55) return '약 ' + Math.max(15, Math.ceil(min / 5) * 5) + '분';
+            const rounded = Math.ceil(min / 10) * 10;
+            const h = Math.floor(rounded / 60);
+            const m = rounded % 60;
+            if (!h) return '약 ' + m + '분';
+            if (!m) return '약 ' + h + '시간';
+            return '약 ' + h + '시간 ' + m + '분';
+        }
+        function setMapDistance(fromKey, toKey, meters, seconds, mode){
+            const box = document.getElementById('map-distance');
+            const legEl = document.getElementById('map-distance-leg');
+            const timeEl = document.getElementById('map-distance-time');
+            const kmEl = document.getElementById('map-distance-km');
+            if (!box || !legEl || !timeEl || !kmEl) return;
+            const kmLabel = formatApproxKm(meters);
+            const timeLabel = formatApproxTime(groupTravelSeconds(seconds, mode));
+            if (!fromKey || (!kmLabel && !timeLabel)) {
+                box.classList.add('hidden');
+                return;
+            }
+            box.classList.remove('hidden');
+            legEl.textContent = spots[fromKey].s + ' → ' + spots[toKey].s;
+            timeEl.textContent = timeLabel;
+            kmEl.textContent = kmLabel;
+        }
+        function pinIcon(spot){
+            return L.divIcon({
+                className: 'custom-icon',
+                html: `<div class="map-pin-wrap"><div class="map-pin-dot" style="background:${spot.col};">${spot.i}</div><span class="map-pin-label">${spot.s}</span></div>`,
+                iconSize: [96, 52],
+                iconAnchor: [48, 16]
+            });
+        }
+        function headingDeg(a, b){
+            const lat1 = a[0] * Math.PI / 180;
+            const lat2 = b[0] * Math.PI / 180;
+            const dLng = (b[1] - a[1]) * Math.PI / 180;
             const y = Math.sin(dLng) * Math.cos(lat2);
             const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
             return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
         }
-        function headingParts(mode, bearing){
-            const nose = mode === 'flight' ? 45 : 270;
-            let rot = ((bearing - nose + 540) % 360) - 180;
-            let flip = 1;
-            if(mode !== 'flight' && Math.abs(rot) > 90){
-                flip = -1;
-                rot += rot > 0 ? -180 : 180;
-            }
-            return { rot, flip };
+        function moverRotate(mode, from, to){
+            const rest = mode === 'flight' ? 45 : 90;
+            return headingDeg(from, to) - rest;
         }
-        function travelerIcon(mode, bearing){
+        function moverIcon(mode, from, to){
             const emoji = mode === 'flight' ? '✈️' : '🚌';
-            const { rot, flip } = headingParts(mode, bearing);
+            const rot = (from && to) ? moverRotate(mode, from, to) : 0;
             return L.divIcon({
-                className: 'traveler-icon',
-                html: `<div class="map-vehicle traveler-rot" style="transform:rotate(${rot}deg)"><span class="traveler-flip" style="display:inline-block;transform:scaleX(${flip})">${emoji}</span></div>`,
-                iconSize: [44, 44],
-                iconAnchor: [22, 22]
+                className: 'custom-icon',
+                html: `<div class="map-bus" style="transform:rotate(${rot}deg)">${emoji}</div>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 14]
             });
+        }
+        function applyMoverHeading(marker, from, to, mode){
+            if (!marker) return;
+            const el = marker.getElement();
+            const icon = el && el.querySelector('.map-bus');
+            if (icon) icon.style.transform = `rotate(${moverRotate(mode, from, to)}deg)`;
         }
         function densifyLine(a, b, n){
             const path = [];
-            for(let i = 0; i <= n; i++){
+            for (let i = 0; i <= n; i++) {
                 const t = i / n;
                 path.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
             }
             return path;
         }
-        function latLngAlong(latlngs, t){
-            if(!latlngs.length) return null;
-            const pts = latlngs.map(p => L.latLng(p));
-            if(t <= 0) return pts[0];
-            if(t >= 1) return pts[pts.length - 1];
-            let total = 0;
-            const segs = [];
-            for(let i = 0; i < pts.length - 1; i++){
-                const d = pts[i].distanceTo(pts[i + 1]);
-                segs.push({ a: pts[i], b: pts[i + 1], d });
-                total += d;
-            }
-            if(!total) return pts[0];
-            let remain = total * t;
-            for(const s of segs){
-                if(remain <= s.d || s.d === 0){
-                    const r = s.d ? remain / s.d : 0;
-                    return L.latLng(s.a.lat + (s.b.lat - s.a.lat) * r, s.a.lng + (s.b.lng - s.a.lng) * r);
-                }
-                remain -= s.d;
-            }
-            return pts[pts.length - 1];
+        function clearMapLayers(){
+            if (activeMover) activeMover._aborted = true;
+            activeMover = null;
+            mapLayers.forEach(layer => {
+                if (layer._aborted !== undefined) layer._aborted = true;
+                map.removeLayer(layer);
+            });
+            mapLayers = [];
         }
-        function lookAhead(latlngs, t){
-            return { a: latLngAlong(latlngs, Math.max(0, t - 0.015)), b: latLngAlong(latlngs, Math.min(1, t + 0.03)) };
-        }
-        async function roadPath(a, b){
-            const key = a.join(',')+'|'+b.join(',');
-            if(osrmCache[key]) return osrmCache[key];
+        async function roadRoute(fromC, toC){
+            const key = fromC.join(',') + '|' + toC.join(',');
+            if (osrmCache[key]) return osrmCache[key];
             try {
-                const url = `https://router.project-osrm.org/route/v1/driving/${a[1]},${a[0]};${b[1]},${b[0]}?overview=full&geometries=geojson`;
-                const res = await fetch(url);
+                const coords = `${fromC[1]},${fromC[0]};${toC[1]},${toC[0]}`;
+                const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`);
                 const data = await res.json();
-                if(data.code === 'Ok' && data.routes && data.routes[0]){
-                    const path = data.routes[0].geometry.coordinates.map(([lng,lat]) => [lat,lng]);
-                    osrmCache[key] = path;
-                    return path;
+                if (data.code === 'Ok' && data.routes && data.routes[0]) {
+                    const path = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+                    const packed = { path, meters: data.routes[0].distance, seconds: data.routes[0].duration };
+                    osrmCache[key] = packed;
+                    return packed;
                 }
-            } catch(e) {}
-            return [a, b];
+            } catch (e) { /* straight fallback */ }
+            const path = [fromC, toC];
+            const meters = pathMeters(path);
+            return { path, meters, seconds: estimateSeconds(meters, 'bus') };
         }
-        function setMapLeg(fromT, toT){
-            const el = document.getElementById('map-leg');
-            if(!el) return;
-            el.style.display = 'block';
-            el.textContent = fromT + ' → ' + toT;
+        function flightRoute(fromC, toC){
+            const path = densifyLine(fromC, toC, 72);
+            const meters = pathMeters(path);
+            return { path, meters, seconds: estimateSeconds(meters, 'flight') };
         }
-        function pinSpot(key){
-            const s = spots[key];
-            if(!s) return;
-            const htmlStr = `<div class="map-marker-bubble" style="background:${s.col};width:32px;height:32px;animation:popIn 0.5s forwards;color:white;font-size:14px;">${s.i}</div>`;
-            L.marker(s.c, { icon: L.divIcon({ className: '', html: htmlStr, iconSize:[32,32], iconAnchor:[16,16] }) })
-                .bindTooltip('<b>'+s.t+'</b>', { direction:'top' })
-                .addTo(layerGroup);
+        function lineDuration(pixelLength, routeKey, mode){
+            const mobile = isMobileMap();
+            const allView = routeKey === 'all';
+            const min = mobile ? (allView ? 1600 : 2800) : (allView ? 900 : 1400);
+            const max = mobile ? (allView ? 2800 : 5600) : (allView ? 1800 : 2800);
+            const pxPerMs = mobile ? (allView ? 0.22 : 0.12) : 0.28;
+            let ms = Math.max(min, Math.min(max, pixelLength / pxPerMs));
+            if (mode === 'flight') ms = Math.min(ms, mobile ? (allView ? 2800 : 5000) : (allView ? 1600 : 2500));
+            return ms;
         }
-        function moveVehicle(ll, mode, bearing){
-            const { rot, flip } = headingParts(mode, bearing);
-            if(!vehicleMarker){
-                vehicleMode = mode;
-                vehicleMarker = L.marker(ll, { icon: travelerIcon(mode, bearing), zIndexOffset: 1200 }).addTo(layerGroup);
-                return;
-            }
-            vehicleMarker.setLatLng(ll);
-            if(vehicleMode !== mode){
-                vehicleMode = mode;
-                vehicleMarker.setIcon(travelerIcon(mode, bearing));
-                return;
-            }
-            const el = vehicleMarker.getElement();
-            const wrap = el && el.querySelector('.traveler-rot');
-            const span = el && el.querySelector('.traveler-flip');
-            if(wrap) wrap.style.transform = `rotate(${rot}deg)`;
-            if(span) span.style.transform = `scaleX(${flip})`;
-        }
-        function animatePath(path, color, dash, mode, ms, seq){
+        function whenPathReady(polyline){
             return new Promise(resolve => {
-                const pl = L.polyline(dash ? [path[0]] : path, { color, weight: mode==='flight'?3:4, opacity:0.9, dashArray: dash || null }).addTo(layerGroup);
-                const start = performance.now();
-                function frame(now){
-                    if(seq !== mapDrawSeq){ resolve(); return; }
-                    const p = Math.min(1, (now - start) / ms);
-                    const t = easeInOut(p);
-                    const ll = latLngAlong(path, t);
-                    const hd = lookAhead(path, t);
-                    if(ll && hd.a && hd.b) moveVehicle(ll, mode, bearingDeg(hd.a, hd.b));
-                    if(dash && ll){
-                        const n = Math.max(1, Math.floor(t * (path.length - 1)));
-                        const pts = path.slice(0, n + 1);
-                        pts.push([ll.lat, ll.lng]);
-                        pl.setLatLngs(pts);
-                    } else if(pl._path){
-                        const len = pl._path.getTotalLength();
-                        pl._path.style.strokeDasharray = String(len);
-                        pl._path.style.strokeDashoffset = String(len * (1 - t));
+                let tries = 24;
+                const tick = () => {
+                    const el = polyline.getElement();
+                    if (el && typeof el.getTotalLength === 'function') resolve(el);
+                    else if (tries-- > 0) requestAnimationFrame(tick);
+                    else resolve(null);
+                };
+                requestAnimationFrame(tick);
+            });
+        }
+        function animateLine(polyline, duration, dashPattern){
+            return new Promise(async resolve => {
+                const path = await whenPathReady(polyline);
+                if (!path) { resolve(duration); return; }
+                const length = path.getTotalLength();
+                const ms = duration || 1400;
+                path.style.transition = 'none';
+                path.style.strokeDasharray = length + ' ' + length;
+                path.style.strokeDashoffset = String(length);
+                path.getBoundingClientRect();
+                path.style.transition = `stroke-dashoffset ${ms}ms ease-in-out`;
+                path.style.strokeDashoffset = '0';
+                setTimeout(() => {
+                    if (dashPattern) {
+                        path.style.transition = 'none';
+                        path.style.strokeDasharray = dashPattern;
+                        path.style.strokeDashoffset = '0';
                     }
-                    if(p < 1) requestAnimationFrame(frame);
-                    else { pl.setLatLngs(path); resolve(); }
+                    resolve(ms);
+                }, ms + 40);
+            });
+        }
+        function moveMarkerAlong(marker, latlngs, duration, mode){
+            return new Promise(resolve => {
+                if (!marker || !latlngs || latlngs.length < 2) { resolve(); return; }
+                const dists = [0];
+                let total = 0;
+                for (let i = 1; i < latlngs.length; i++) {
+                    total += L.latLng(latlngs[i - 1]).distanceTo(L.latLng(latlngs[i]));
+                    dists.push(total);
+                }
+                if (total === 0) { resolve(); return; }
+                applyMoverHeading(marker, latlngs[0], latlngs[1], mode);
+                const start = performance.now();
+                const ease = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+                function frame(now){
+                    if (marker._aborted) { resolve(); return; }
+                    const t = Math.min(1, (now - start) / duration);
+                    const target = total * ease(t);
+                    let i = 1;
+                    while (i < dists.length && dists[i] < target) i++;
+                    const a = latlngs[i - 1];
+                    const b = latlngs[Math.min(i, latlngs.length - 1)];
+                    const span = (dists[i] - dists[i - 1]) || 1;
+                    const f = (target - dists[i - 1]) / span;
+                    marker.setLatLng([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]);
+                    applyMoverHeading(marker, a, b, mode);
+                    if (t < 1) requestAnimationFrame(frame);
+                    else resolve();
                 }
                 requestAnimationFrame(frame);
             });
-        }
-
-        function localSpotKeys(route){
-            return (route.zoom || route.p).filter(k => k !== 'icn');
-        }
-        function boundsOf(keys, extraPts){
-            const b = L.latLngBounds();
-            (keys || []).forEach(k => { if(spots[k]) b.extend(spots[k].c); });
-            (extraPts || []).forEach(pt => b.extend(pt));
-            return b;
         }
         function waitSeq(ms, seq){
             return new Promise(resolve => setTimeout(() => resolve(seq === mapDrawSeq), ms));
         }
         function flyMap(b, maxZoom, seq){
             return new Promise(resolve => {
-                if(seq !== mapDrawSeq || !b || !b.isValid()){ resolve(); return; }
+                if (seq !== mapDrawSeq || !b || !b.isValid()) { resolve(); return; }
                 let done = false;
                 const finish = () => {
-                    if(done) return;
+                    if (done) return;
                     done = true;
                     map.off('moveend', finish);
                     resolve();
@@ -1553,83 +1694,162 @@
                 setTimeout(finish, 1400);
             });
         }
+        function boundsOf(keys, extraPts){
+            const b = L.latLngBounds();
+            (keys || []).forEach(k => { if (spots[k]) b.extend(spots[k].c); });
+            (extraPts || []).forEach(pt => b.extend(pt));
+            return b;
+        }
+        function localZoomKeys(route){
+            return (route.zoom || []).filter(k => k !== 'icn');
+        }
+
+        async function drawMap(routeKey){
+            if (!map) return;
+            const seq = ++mapDrawSeq;
+            clearMapLayers();
+            const routeData = routes[routeKey] || routes.all;
+            const hint = mapHints[routeKey] || mapHints.all;
+            const hintEl = document.getElementById('map-hint');
+            if (hintEl) hintEl.textContent = hint;
+            setMapStatus('실제 도로 동선을 불러오는 중...');
+            setMapDistance('', '', 0, 0);
+
+            const legs = routeData.legs;
+            const first = legs[0];
+            const localZoom = routeData.maxZoom || 12;
+            if (first.mode === 'flight') {
+                map.fitBounds(L.latLngBounds([spots[first.from].c, spots[first.to].c]), { padding: [48, 48], maxZoom: 5, animate: false });
+            } else {
+                map.fitBounds(boundsOf(localZoomKeys(routeData)), { padding: [48, 48], maxZoom: localZoom, animate: false });
+            }
+            setTimeout(() => map.invalidateSize(), 120);
+
+            const packed = await Promise.all(legs.map(leg =>
+                leg.mode === 'flight' ? flightRoute(spots[leg.from].c, spots[leg.to].c) : roadRoute(spots[leg.from].c, spots[leg.to].c)
+            ));
+            if (seq !== mapDrawSeq) return;
+
+            const roadPts = packed.filter((_, i) => legs[i].mode !== 'flight').flatMap(item => item.path);
+            if (first.mode !== 'flight' && roadPts.length) {
+                map.fitBounds(boundsOf(localZoomKeys(routeData), roadPts), { padding: [48, 48], maxZoom: localZoom });
+            }
+            await new Promise(r => setTimeout(r, 280));
+            if (seq !== mapDrawSeq) return;
+
+            const ghostPts = packed.filter((_, i) => legs[i].mode !== 'flight').flatMap(item => item.path);
+            if (ghostPts.length) {
+                const ghost = L.polyline(ghostPts, { color: '#94a3b8', weight: 4, opacity: 0.22, lineJoin: 'round', lineCap: 'round' }).addTo(map);
+                mapLayers.push(ghost);
+            }
+
+            const placed = new Set();
+            const addPin = (key) => {
+                if (placed.has(key)) return;
+                placed.add(key);
+                const spot = spots[key];
+                const marker = L.marker(spot.c, { icon: pinIcon(spot), zIndexOffset: 200 })
+                    .addTo(map)
+                    .bindTooltip('<b>' + spot.t + '</b>', { direction: 'top', offset: [0, -16] });
+                mapLayers.push(marker);
+            };
+            addPin(first.from);
+
+            const mover = L.marker(spots[first.from].c, {
+                icon: moverIcon(first.mode, spots[first.from].c, spots[first.to].c),
+                zIndexOffset: 900
+            }).addTo(map);
+            mover._aborted = false;
+            activeMover = mover;
+            mapLayers.push(mover);
+
+            for (let i = 0; i < legs.length; i++) {
+                if (seq !== mapDrawSeq) return;
+                const leg = legs[i];
+                const next = legs[i + 1];
+                const path = packed[i].path;
+                const meters = packed[i].meters || pathMeters(path);
+                const seconds = packed[i].seconds || estimateSeconds(meters, leg.mode);
+                const dashPattern = leg.mode === 'flight' ? '16, 12' : null;
+                setMapStatus(leg.label || (spots[leg.from].s + ' → ' + spots[leg.to].s));
+                setMapDistance(leg.from, leg.to, meters, seconds, leg.mode);
+                mover.setIcon(moverIcon(leg.mode, spots[leg.from].c, spots[leg.to].c));
+
+                if (leg.mode === 'flight') {
+                    map.fitBounds(L.latLngBounds([spots[leg.from].c, spots[leg.to].c]), { padding: [48, 48], maxZoom: 5, animate: false });
+                }
+
+                const poly = L.polyline(path, {
+                    color: leg.color,
+                    weight: dashPattern ? 3.5 : 5,
+                    opacity: 0.95,
+                    dashArray: dashPattern,
+                    lineJoin: 'round',
+                    lineCap: 'round'
+                }).addTo(map);
+                mapLayers.push(poly);
+                const ready = await whenPathReady(poly);
+                const ms = lineDuration(ready ? ready.getTotalLength() : 400, routeKey, leg.mode);
+                await Promise.all([
+                    animateLine(poly, ms, dashPattern),
+                    moveMarkerAlong(mover, path, ms, leg.mode)
+                ]);
+                if (seq !== mapDrawSeq) return;
+                addPin(leg.to);
+
+                if (leg.mode === 'flight' && next && next.mode !== 'flight') {
+                    const ok = await waitSeq(280, seq);
+                    if (!ok) return;
+                    await flyMap(boundsOf(localZoomKeys(routeData), packed.filter((_, idx) => legs[idx].mode !== 'flight').flatMap(item => item.path)), localZoom, seq);
+                    if (seq !== mapDrawSeq) return;
+                    await waitSeq(180, seq);
+                } else if (leg.mode !== 'flight' && next && next.mode === 'flight') {
+                    const ok = await waitSeq(280, seq);
+                    if (!ok) return;
+                    await flyMap(L.latLngBounds([spots[next.from].c, spots[next.to].c]), 5, seq);
+                    if (seq !== mapDrawSeq) return;
+                    await waitSeq(180, seq);
+                } else {
+                    await new Promise(r => setTimeout(r, isMobileMap() ? 280 : 140));
+                }
+            }
+            if (seq !== mapDrawSeq) return;
+            setMapStatus(hint);
+            if (mover && map.hasLayer(mover)) map.removeLayer(mover);
+            mapLayers = mapLayers.filter(layer => layer !== mover);
+            if (activeMover === mover) activeMover = null;
+            setTimeout(() => map.invalidateSize(), 160);
+        }
 
         function initMap() {
-            if(map || typeof L === 'undefined') return;
-            map = L.map('map', { scrollWheelZoom: false });
+            if (map || typeof L === 'undefined') return;
+            map = L.map('map', { scrollWheelZoom: false, zoomControl: false });
+            L.control.zoom({ position: 'bottomleft' }).addTo(map);
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 19,
                 attribution: 'Tiles © Esri'
             }).addTo(map);
-            layerGroup = L.layerGroup().addTo(map);
             const startKey = getTodayDayKey() || (isMobileMap() ? 'day1' : 'all');
             changeMapAndTab(startKey);
         }
 
-        async function changeMapAndTab(dayId) {
-            if(dayId !== 'all') showDayTab(dayId);
+        function changeMapAndTab(dayId) {
+            if (dayId !== 'all') showDayTab(dayId);
             document.querySelectorAll('.map-tab-btn').forEach(btn => {
                 btn.classList.remove('active','bg-tm','text-white','border-tm','shadow-sm');
                 btn.classList.add('bg-white','text-slate-600','border-slate-300');
             });
             const mapBtn = document.querySelector(`.map-tab-btn[onclick="changeMapAndTab('${dayId}')"]`);
-            if(mapBtn){
+            if (mapBtn) {
                 mapBtn.classList.add('active','bg-tm','text-white','border-tm','shadow-sm');
                 mapBtn.classList.remove('bg-white','text-slate-600','border-slate-300');
             }
-            if(!map || !layerGroup) return;
-            const seq = ++mapDrawSeq;
-            layerGroup.clearLayers();
-            vehicleMarker = null;
-            vehicleMode = null;
-            const route = routes[dayId] || routes.all;
             const hintEl = document.getElementById('map-hint');
-            if (hintEl) hintEl.innerText = mapHints[dayId] || mapHints.all;
-            const localZoom = route.maxZoom || 12;
-            const firstSeg = route.segs[0];
-            if(firstSeg && firstSeg.mode === 'flight'){
-                const fa = spots[firstSeg.from], fb = spots[firstSeg.to];
-                map.fitBounds(L.latLngBounds([fa.c, fb.c]), { padding: [48, 48], maxZoom: 5, animate: false });
-            } else {
-                map.fitBounds(boundsOf(localSpotKeys(route)), { padding: [48, 48], maxZoom: localZoom, animate: false });
-            }
-            setTimeout(() => map.invalidateSize(), 300);
-            const first = route.p[0];
-            if(first) pinSpot(first);
-            for(let i = 0; i < route.segs.length; i++){
-                if(seq !== mapDrawSeq) return;
-                const seg = route.segs[i];
-                const next = route.segs[i + 1];
-                const a = spots[seg.from], b = spots[seg.to];
-                if(!a || !b) continue;
-                setMapLeg(a.t, b.t);
-                const path = seg.mode === 'flight' ? densifyLine(a.c, b.c, 72) : await roadPath(a.c, b.c);
-                if(seq !== mapDrawSeq) return;
-                if(seg.mode === 'flight'){
-                    map.fitBounds(L.latLngBounds([a.c, b.c]), { padding: [48, 48], maxZoom: 5, animate: false });
-                } else {
-                    map.fitBounds(boundsOf(localSpotKeys(route), path), { padding: [48, 48], maxZoom: localZoom, animate: false });
-                }
-                await animatePath(path, seg.c, seg.mode==='flight' ? '10,8' : null, seg.mode, segMs(seg.mode, dayId), seq);
-                if(seq !== mapDrawSeq) return;
-                pinSpot(seg.to);
-                if(seg.mode === 'flight' && next && next.mode !== 'flight'){
-                    const ok = await waitSeq(280, seq);
-                    if(!ok) return;
-                    await flyMap(boundsOf(localSpotKeys(route)), localZoom, seq);
-                    if(seq !== mapDrawSeq) return;
-                    await waitSeq(220, seq);
-                } else if(seg.mode !== 'flight' && next && next.mode === 'flight'){
-                    const ok = await waitSeq(280, seq);
-                    if(!ok) return;
-                    const na = spots[next.from], nb = spots[next.to];
-                    await flyMap(L.latLngBounds([na.c, nb.c]), 5, seq);
-                    if(seq !== mapDrawSeq) return;
-                    await waitSeq(220, seq);
-                }
-            }
-            const leg = document.getElementById('map-leg');
-            if(leg && seq === mapDrawSeq) leg.style.display = 'none';
+            if (hintEl) hintEl.textContent = mapHints[dayId] || mapHints.all;
+            if (!map) return;
+            drawMap(dayId);
         }
+
         const io = new IntersectionObserver((entries)=>{
             if(entries[0].isIntersecting) { initMap(); io.disconnect(); }
         }, { threshold: 0.1 });
