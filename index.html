@@ -1438,7 +1438,7 @@
             },
             day1: {
                 zoom: ['school','deokpyeong','icn','dad','hotel'],
-                maxZoom: 8,
+                maxZoom: 12,
                 legs: [
                     { from:'school', to:'deokpyeong', mode:'bus', color:'#0f766e' },
                     { from:'deokpyeong', to:'icn', mode:'bus', color:'#0f766e' },
@@ -1484,7 +1484,7 @@
             },
             day5: {
                 zoom: ['icn','pyeongchang','school'],
-                maxZoom: 9,
+                maxZoom: 11,
                 legs: [
                     { from:'dad', to:'icn', mode:'flight', color:'#64748b', label:'KE460 귀국' },
                     { from:'icn', to:'pyeongchang', mode:'bus', color:'#0f766e' },
@@ -1704,9 +1704,16 @@
         function waitSeq(ms, seq){
             return new Promise(resolve => setTimeout(() => resolve(seq === mapDrawSeq), ms));
         }
-        function flyMap(b, maxZoom, seq){
+        function boundsOf(keys, extraPts){
+            const b = L.latLngBounds();
+            (keys || []).forEach(k => { if (spots[k]) b.extend(spots[k].c); });
+            (extraPts || []).forEach(pt => b.extend(pt));
+            return b;
+        }
+        function fitPath(path, maxZoom, seq){
             return new Promise(resolve => {
-                if (seq !== mapDrawSeq || !b || !b.isValid()) { resolve(); return; }
+                if (seq !== mapDrawSeq || !path || path.length < 2) { resolve(); return; }
+                const b = L.latLngBounds(path);
                 let done = false;
                 const finish = () => {
                     if (done) return;
@@ -1715,18 +1722,21 @@
                     resolve();
                 };
                 map.once('moveend', finish);
-                map.flyToBounds(b, { padding: [48, 48], maxZoom: maxZoom, duration: 1.15 });
-                setTimeout(finish, 1400);
+                map.fitBounds(b.pad(0.18), { animate: true, duration: 0.7, maxZoom: maxZoom || 12, padding: [44, 44] });
+                setTimeout(finish, 850);
             });
         }
-        function boundsOf(keys, extraPts){
-            const b = L.latLngBounds();
-            (keys || []).forEach(k => { if (spots[k]) b.extend(spots[k].c); });
-            (extraPts || []).forEach(pt => b.extend(pt));
-            return b;
+        function legMaxZoom(leg, routeKey, routeData){
+            if (leg.mode === 'flight') return 5;
+            if (routeKey === 'all') return 11;
+            return Math.max(routeData.maxZoom || 12, 11);
         }
-        function localZoomKeys(route){
-            return (route.zoom || []).filter(k => k !== 'icn');
+        function overviewKeys(routeKey, routeData){
+            const keys = routeData.zoom || [];
+            if (routeKey === 'day5') return keys;
+            const local = keys.filter(k => spots[k] && spots[k].c[0] < 30);
+            if (local.length >= 2) return local;
+            return keys.filter(k => k !== 'icn');
         }
 
         async function drawMap(routeKey){
@@ -1742,11 +1752,14 @@
 
             const legs = routeData.legs;
             const first = legs[0];
-            const localZoom = routeData.maxZoom || 12;
             if (first.mode === 'flight') {
                 map.fitBounds(L.latLngBounds([spots[first.from].c, spots[first.to].c]), { padding: [48, 48], maxZoom: 5, animate: false });
             } else {
-                map.fitBounds(boundsOf(localZoomKeys(routeData)), { padding: [48, 48], maxZoom: localZoom, animate: false });
+                map.fitBounds(L.latLngBounds([spots[first.from].c, spots[first.to].c]), {
+                    padding: [48, 48],
+                    maxZoom: legMaxZoom(first, routeKey, routeData),
+                    animate: false
+                });
             }
             setTimeout(() => map.invalidateSize(), 120);
 
@@ -1755,11 +1768,9 @@
             ));
             if (seq !== mapDrawSeq) return;
 
-            const roadPts = packed.filter((_, i) => legs[i].mode !== 'flight').flatMap(item => item.path);
-            if (first.mode !== 'flight' && roadPts.length) {
-                map.fitBounds(boundsOf(localZoomKeys(routeData), roadPts), { padding: [48, 48], maxZoom: localZoom });
-            }
-            await new Promise(r => setTimeout(r, 280));
+            await fitPath(packed[0].path, legMaxZoom(first, routeKey, routeData), seq);
+            if (seq !== mapDrawSeq) return;
+            await new Promise(r => setTimeout(r, 200));
             if (seq !== mapDrawSeq) return;
 
             const ghostPts = packed.filter((_, i) => legs[i].mode !== 'flight').flatMap(item => item.path);
@@ -1791,7 +1802,6 @@
             for (let i = 0; i < legs.length; i++) {
                 if (seq !== mapDrawSeq) return;
                 const leg = legs[i];
-                const next = legs[i + 1];
                 const path = packed[i].path;
                 const meters = packed[i].meters || pathMeters(path);
                 const seconds = packed[i].seconds || estimateSeconds(meters, leg.mode);
@@ -1799,10 +1809,10 @@
                 setMapStatus(leg.label || (spots[leg.from].s + ' → ' + spots[leg.to].s));
                 setMapDistance(leg.from, leg.to, meters, seconds, leg.mode);
                 mover.setIcon(moverIcon(leg.mode, spots[leg.from].c, spots[leg.to].c));
+                mover.setLatLng(path[0]);
 
-                if (leg.mode === 'flight') {
-                    map.fitBounds(L.latLngBounds([spots[leg.from].c, spots[leg.to].c]), { padding: [48, 48], maxZoom: 5, animate: false });
-                }
+                await fitPath(path, legMaxZoom(leg, routeKey, routeData), seq);
+                if (seq !== mapDrawSeq) return;
 
                 const poly = L.polyline(path, {
                     color: leg.color,
@@ -1821,28 +1831,22 @@
                 ]);
                 if (seq !== mapDrawSeq) return;
                 addPin(leg.to);
-
-                if (leg.mode === 'flight' && next && next.mode !== 'flight') {
-                    const ok = await waitSeq(280, seq);
-                    if (!ok) return;
-                    await flyMap(boundsOf(localZoomKeys(routeData), packed.filter((_, idx) => legs[idx].mode !== 'flight').flatMap(item => item.path)), localZoom, seq);
-                    if (seq !== mapDrawSeq) return;
-                    await waitSeq(180, seq);
-                } else if (leg.mode !== 'flight' && next && next.mode === 'flight') {
-                    const ok = await waitSeq(280, seq);
-                    if (!ok) return;
-                    await flyMap(L.latLngBounds([spots[next.from].c, spots[next.to].c]), 5, seq);
-                    if (seq !== mapDrawSeq) return;
-                    await waitSeq(180, seq);
-                } else {
-                    await new Promise(r => setTimeout(r, isMobileMap() ? 280 : 140));
-                }
+                await new Promise(r => setTimeout(r, isMobileMap() ? 280 : 140));
             }
             if (seq !== mapDrawSeq) return;
             setMapStatus(hint);
             if (mover && map.hasLayer(mover)) map.removeLayer(mover);
             mapLayers = mapLayers.filter(layer => layer !== mover);
             if (activeMover === mover) activeMover = null;
+            const ovKeys = overviewKeys(routeKey, routeData);
+            const ovBounds = boundsOf(ovKeys.length ? ovKeys : routeData.zoom);
+            if (ovBounds.isValid()) {
+                map.fitBounds(ovBounds, {
+                    padding: [40, 40],
+                    maxZoom: routeKey === 'all' ? 8 : Math.min(routeData.maxZoom || 11, 11),
+                    animate: true
+                });
+            }
             setTimeout(() => map.invalidateSize(), 160);
         }
 
