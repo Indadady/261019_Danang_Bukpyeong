@@ -44,8 +44,17 @@
         #map-wrap { position: relative; z-index: 0; }
         #map { height: 500px; width: 100%; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1); z-index: 10; }
         @media(min-width:1024px) { #map { height: 600px; } }
-        .custom-icon { background: transparent; border: none; }
-        .map-pin-wrap { display: flex; flex-direction: column; align-items: center; }
+        .custom-icon,
+        .leaflet-marker-icon.custom-icon,
+        .leaflet-div-icon {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .map-pin-wrap {
+            display: flex; flex-direction: column; align-items: center;
+            background: transparent; border: none; box-shadow: none;
+        }
         .map-pin-dot {
             width: 32px; height: 32px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
@@ -72,6 +81,7 @@
             filter: drop-shadow(0 4px 8px rgba(15,23,42,0.35));
             transform-origin: center center;
             display: inline-block;
+            background: transparent; border: none; box-shadow: none;
         }
         #map-distance { min-width: 7.75rem; max-width: 10.5rem; }
         body.event-day section { scroll-margin-top: 112px; }
@@ -1376,7 +1386,7 @@
         let map, mapLayers = [], mapDrawSeq = 0, activeMover = null;
         const osrmCache = {};
         const spots = {
-            school: { c:[37.482078, 129.1243866], t:'북평초등학교', s:'학교', col:'#0f766e', i:'🏫' },
+            school: { c:[37.454654, 128.674617], t:'북평초등학교', s:'학교', col:'#0f766e', i:'🏫' },
             deokpyeong: { c:[37.2397, 127.3465], t:'덕평휴게소', s:'덕평', col:'#ca8a04', i:'🍴' },
             pyeongchang: { c:[37.6057, 128.4536], t:'평창휴게소', s:'평창', col:'#ca8a04', i:'🍴' },
             icn: { c:[37.4602, 126.4407], t:'인천공항 T2', s:'인천', col:'#64748b', i:'✈️' },
@@ -1566,25 +1576,41 @@
             const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
             return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
         }
-        function moverRotate(mode, from, to){
+        function headingPair(latlngs, i){
+            const a = latlngs[Math.max(0, Math.min(i, latlngs.length - 1))];
+            let j = Math.min(Math.max(i + 1, 1), latlngs.length - 1);
+            while (j < latlngs.length - 1 && L.latLng(a).distanceTo(L.latLng(latlngs[j])) < 40) j++;
+            return [a, latlngs[j]];
+        }
+        function moverCssTransform(mode, from, to){
+            if (!from || !to) return 'rotate(0deg)';
+            if (L.latLng(from).distanceTo(L.latLng(to)) < 8) return null;
             const rest = mode === 'flight' ? 45 : 90;
-            return headingDeg(from, to) - rest;
+            let rot = headingDeg(from, to) - rest;
+            while (rot > 180) rot -= 360;
+            while (rot < -180) rot += 360;
+            if (mode !== 'flight' && Math.abs(rot) > 90) {
+                const flipRot = rot > 0 ? rot - 180 : rot + 180;
+                return `scaleX(-1) rotate(${flipRot}deg)`;
+            }
+            return `rotate(${rot}deg)`;
         }
         function moverIcon(mode, from, to){
             const emoji = mode === 'flight' ? '✈️' : '🚌';
-            const rot = (from && to) ? moverRotate(mode, from, to) : 0;
+            const transform = moverCssTransform(mode, from, to) || 'rotate(0deg)';
             return L.divIcon({
                 className: 'custom-icon',
-                html: `<div class="map-bus" style="transform:rotate(${rot}deg)">${emoji}</div>`,
+                html: `<div class="map-bus" style="transform:${transform}">${emoji}</div>`,
                 iconSize: [28, 28],
                 iconAnchor: [14, 14]
             });
         }
         function applyMoverHeading(marker, from, to, mode){
-            if (!marker) return;
-            const el = marker.getElement();
-            const icon = el && el.querySelector('.map-bus');
-            if (icon) icon.style.transform = `rotate(${moverRotate(mode, from, to)}deg)`;
+            if (!marker || !from || !to) return;
+            const transform = moverCssTransform(mode, from, to);
+            if (!transform) return;
+            const icon = marker.getElement() && marker.getElement().querySelector('.map-bus');
+            if (icon) icon.style.transform = transform;
         }
         function densifyLine(a, b, n){
             const path = [];
@@ -1680,7 +1706,8 @@
                     dists.push(total);
                 }
                 if (total === 0) { resolve(); return; }
-                applyMoverHeading(marker, latlngs[0], latlngs[1], mode);
+                const [h0a, h0b] = headingPair(latlngs, 0);
+                applyMoverHeading(marker, h0a, h0b, mode);
                 const start = performance.now();
                 const ease = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
                 function frame(now){
@@ -1694,7 +1721,8 @@
                     const span = (dists[i] - dists[i - 1]) || 1;
                     const f = (target - dists[i - 1]) / span;
                     marker.setLatLng([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]);
-                    applyMoverHeading(marker, a, b, mode);
+                    const [ha, hb] = headingPair(latlngs, i - 1);
+                    applyMoverHeading(marker, ha, hb, mode);
                     if (t < 1) requestAnimationFrame(frame);
                     else resolve();
                 }
