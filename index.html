@@ -433,6 +433,7 @@
                     <button onclick="changeMapAndTab('day2')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">2일차(바나산)</button>
                     <button onclick="changeMapAndTab('day3')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">3일차(호이안)</button>
                     <button onclick="changeMapAndTab('day4')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">4일차(시내·귀국)</button>
+                    <button onclick="changeMapAndTab('day5')" class="map-tab-btn px-5 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-300 hover:bg-slate-50 transition-colors">5일차(귀국)</button>
                 </div>
                 <div id="map-wrap" class="relative max-w-5xl mx-auto border border-slate-200 rounded-2xl p-1 shadow-lg bg-white">
                     <div id="map"></div>
@@ -476,20 +477,26 @@
                                 <h3 class="font-bold text-xl text-slate-800">설레는 출국, 베트남으로</h3>
                                 <div class="mt-2 flex flex-wrap gap-2 text-xs font-bold">
                                     <span class="bg-slate-100 text-slate-500 px-2 py-1 rounded">조: 불포함</span>
-                                    <span class="bg-slate-100 text-slate-500 px-2 py-1 rounded">중: 불포함</span>
+                                    <span class="bg-amber-50 text-amber-700 border border-amber-100 px-2 py-1 rounded">중: 덕평휴게소</span>
                                     <span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-1 rounded">석: 기내식</span>
                                 </div>
                             </div>
                         </div>
                         <div class="relative border-l-2 border-slate-200 ml-4 pl-6 space-y-7">
                             <div class="relative">
-                                <div class="timeline-dot bg-slate-400 ring-slate-100"></div>
-                                <h4 class="font-bold text-lg text-slate-800">15:20 인천공항 T2 집결</h4>
-                                <p class="text-sm text-slate-500 mt-1">대한항공 수속 카운터 앞 · 제1터미널이 아닙니다.</p>
+                                <div class="timeline-dot bg-tm ring-blue-100"></div>
+                                <h4 class="font-bold text-lg text-slate-800">🏫 10:00 북평초등학교 출발</h4>
+                                <p class="text-sm text-slate-500 mt-1">전용차량 탑승 후 인천공항으로 이동 · 이동 중 덕평휴게소 식사</p>
+                            </div>
+                            <div class="relative">
+                                <div class="timeline-dot bg-amber-500 ring-amber-100"></div>
+                                <h4 class="font-bold text-lg text-slate-800">🍴 덕평휴게소 식사</h4>
+                                <p class="text-sm text-slate-500 mt-1">영동고속도로 덕평휴게소에서 식사 후 인천공항으로 이동</p>
                             </div>
                             <div class="relative">
                                 <div class="timeline-dot bg-[#0ea5e9] ring-sky-100"></div>
                                 <h4 class="font-bold text-lg text-slate-800">18:20 인천 출발 (대한항공 KE459)</h4>
+                                <p class="text-sm text-slate-500 mt-1">인천국제공항 제2터미널 · 제1터미널이 아닙니다.</p>
                             </div>
                             <div class="relative">
                                 <div class="timeline-dot bg-tm ring-blue-100"></div>
@@ -658,8 +665,8 @@
                             <div>
                                 <h3 class="font-bold text-xl text-slate-800">소중한 추억을 안고, 귀국</h3>
                                 <div class="mt-2 flex flex-wrap gap-2 text-xs font-bold">
-                                    <span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-1 rounded">조: 기내식</span>
-                                    <span class="bg-slate-100 text-slate-500 px-2 py-1 rounded">중: 불포함</span>
+                                    <span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-1 rounded">조: 인천공항</span>
+                                    <span class="bg-amber-50 text-amber-700 border border-amber-100 px-2 py-1 rounded">중: 평창휴게소</span>
                                     <span class="bg-slate-100 text-slate-500 px-2 py-1 rounded">석: 불포함</span>
                                 </div>
                             </div>
@@ -667,12 +674,22 @@
                         <div class="relative border-l-2 border-slate-200 ml-4 pl-6 space-y-7">
                             <div class="relative">
                                 <div class="timeline-dot bg-tm ring-blue-100"></div>
-                                <h4 class="font-bold text-lg text-slate-800">05:30 인천국제공항 T2 도착</h4>
-                                <p class="text-sm text-slate-500 mt-1">수하물 수령 후 전원 해산 · 각 가정 안전 귀가</p>
+                                <h4 class="font-bold text-lg text-slate-800">05:30 인천국제공항 T2 도착 · 조식</h4>
+                                <p class="text-sm text-slate-500 mt-1">수하물 수령 후 인천공항에서 조식을 합니다.</p>
+                            </div>
+                            <div class="relative">
+                                <div class="timeline-dot bg-tm ring-blue-100"></div>
+                                <h4 class="font-bold text-lg text-slate-800">09:00 인천공항 미팅 후 학교로 이동</h4>
+                                <p class="text-sm text-slate-500 mt-1">공항 미팅 뒤 전용차량으로 북평초까지 이동 · 이동 중 평창휴게소 중식</p>
+                            </div>
+                            <div class="relative">
+                                <div class="timeline-dot bg-amber-500 ring-amber-100"></div>
+                                <h4 class="font-bold text-lg text-slate-800">🍴 평창휴게소 중식</h4>
+                                <p class="text-sm text-slate-500 mt-1">영동고속도로 평창휴게소에서 중식 후 학교로 이동합니다.</p>
                             </div>
                             <div class="relative">
                                 <div class="timeline-dot bg-slate-800 ring-slate-200"></div>
-                                <h4 class="font-bold text-lg text-slate-800">3박 5일의 여정을 마치며</h4>
+                                <h4 class="font-bold text-lg text-slate-800">🏫 북평초등학교 도착</h4>
                                 <p class="text-sm text-tm font-bold mt-1">교실을 벗어나 다낭과 호이안의 살아있는 문화를 배운 북평초등학교 학생들. 일정은 항공·현지 상황에 따라 조정될 수 있습니다.</p>
                             </div>
                         </div>
@@ -1040,8 +1057,10 @@
             </thead>
             <tbody>
                 <tr class="tm-day-divider">
-                    <td class="tm-col-date"><strong>1일차</strong><br>10/19 (월)<br><br>인천<br>다낭</td>
+                    <td class="tm-col-date"><strong>1일차</strong><br>10/19 (월)<br><br>학교<br>다낭</td>
                     <td class="tm-col-desc">
+                        <div class="tm-time-flow"><span class="tm-time-tag">10:00</span> 북평초등학교 출발</div>
+                        <div class="tm-time-flow"><span class="tm-time-tag">중식</span> 덕평휴게소 식사</div>
                         <div class="tm-time-flow"><span class="tm-time-tag">18:20</span> 인천국제공항 제2터미널 출발 (대한항공 KE459)</div>
                         <div class="tm-time-flow"><span class="tm-time-tag">21:05</span> 다낭국제공항 도착 후 현지인 가이드 미팅</div>
                         <ul class="tm-desc-list">
@@ -1054,8 +1073,8 @@
                     <td class="tm-col-meal">
                         <div class="tm-meal-wrapper">
                             <div class="tm-meal-simple"><strong>조:</strong><div class="tm-meal-menu">-</div></div>
-                            <div class="tm-meal-simple"><strong>중:</strong><div class="tm-meal-menu">-</div></div>
-                            <div class="tm-meal-simple"><strong>석:</strong><div class="tm-meal-menu">-</div></div>
+                            <div class="tm-meal-simple"><strong>중:</strong><div class="tm-meal-menu">덕평휴게소</div></div>
+                            <div class="tm-meal-simple"><strong>석:</strong><div class="tm-meal-menu">기내식</div></div>
                         </div>
                     </td>
                 </tr>
@@ -1128,17 +1147,19 @@
                     </td>
                 </tr>
                 <tr class="tm-day-divider">
-                    <td class="tm-col-date"><strong>5일차</strong><br>10/23 (금)<br><br>인천</td>
+                    <td class="tm-col-date"><strong>5일차</strong><br>10/23 (금)<br><br>인천<br>학교</td>
                     <td class="tm-col-desc">
-                        <div class="tm-time-flow"><span class="tm-time-tag">05:30</span> 인천국제공항 제2터미널 도착</div>
+                        <div class="tm-time-flow"><span class="tm-time-tag">05:30</span> 인천국제공항 제2터미널 도착 · 공항 조식</div>
+                        <div class="tm-time-flow"><span class="tm-time-tag">09:00</span> 인천공항 미팅 후 학교로 이동</div>
+                        <div class="tm-time-flow"><span class="tm-time-tag">중식</span> 평창휴게소 식사</div>
                         <ul class="tm-desc-list">
-                            <li>수하물 수취 후 해산 및 각 가정으로 안전 귀가</li>
+                            <li>전용차량으로 북평초등학교 도착</li>
                         </ul>
                     </td>
                     <td class="tm-col-meal">
                         <div class="tm-meal-wrapper">
-                            <div class="tm-meal-simple"><strong>조:</strong><div class="tm-meal-menu">-</div></div>
-                            <div class="tm-meal-simple"><strong>중:</strong><div class="tm-meal-menu">-</div></div>
+                            <div class="tm-meal-simple"><strong>조:</strong><div class="tm-meal-menu">인천공항</div></div>
+                            <div class="tm-meal-simple"><strong>중:</strong><div class="tm-meal-menu">평창휴게소</div></div>
                             <div class="tm-meal-simple"><strong>석:</strong><div class="tm-meal-menu">-</div></div>
                         </div>
                     </td>
@@ -1355,6 +1376,9 @@
         let map, mapLayers = [], mapDrawSeq = 0, activeMover = null;
         const osrmCache = {};
         const spots = {
+            school: { c:[37.482078, 129.1243866], t:'북평초등학교', s:'학교', col:'#0f766e', i:'🏫' },
+            deokpyeong: { c:[37.2397, 127.3465], t:'덕평휴게소', s:'덕평', col:'#ca8a04', i:'🍴' },
+            pyeongchang: { c:[37.6057, 128.4536], t:'평창휴게소', s:'평창', col:'#ca8a04', i:'🍴' },
             icn: { c:[37.4602, 126.4407], t:'인천공항 T2', s:'인천', col:'#64748b', i:'✈️' },
             dad: { c:[16.0439, 108.1990], t:'다낭국제공항', s:'다낭공항', col:'#0ea5e9', i:'🛬' },
             hotel: { c:[16.0475, 108.2480], t:'무엉탄 럭셔리 다낭', s:'호텔', col:'#004098', i:'🏨' },
@@ -1374,18 +1398,20 @@
             tower: { c:[16.0698, 108.2240], t:'다낭타워 (스테이크)', s:'다낭타워', col:'#be123c', i:'🌃' }
         };
         const mapHints = {
-            all: '전체 여정 — 인천 출국부터 귀국까지 항공(점선)과 실제 도로 동선',
-            day1: '1일차 — 인천 KE459 → 다낭공항 → 무엉탄 럭셔리',
+            all: '전체 여정 — 북평초등학교 ↔ 인천 ↔ 다낭 + 현지 차량 동선',
+            day1: '1일차 — 학교 10:00 출발 → 덕평휴게소 → 인천 KE459 → 다낭 → 호텔',
             day2: '2일차 — 호텔 → 바나산 케이블카 → 솔향 → 한강유람선 → 호텔',
             day3: '3일차 — 호텔 → 바구니배 → 궁식당 → 호이안 → 모닝글로리 → 호텔',
             day4: '4일차 — 미케비치 → 박물관 → 사랑의 부두 → 3D미술관 → 마담란 → 영응사 → 다낭타워 → 공항 → 인천',
-            day5: '5일차 — 다낭 KE460 → 인천 도착'
+            day5: '5일차 — 인천 조식 · 09:00 미팅 → 평창휴게소 → 북평초등학교 도착'
         };
         const routes = {
             all: {
-                zoom: ['icn','dad','hotel','bana','hoian'],
+                zoom: ['school','icn','dad','hotel','bana','hoian'],
                 maxZoom: 5,
                 legs: [
+                    { from:'school', to:'deokpyeong', mode:'bus', color:'#0f766e' },
+                    { from:'deokpyeong', to:'icn', mode:'bus', color:'#0f766e' },
                     { from:'icn', to:'dad', mode:'flight', color:'#004098', label:'KE459 출국' },
                     { from:'dad', to:'hotel', mode:'bus', color:'#004098' },
                     { from:'hotel', to:'bana', mode:'bus', color:'#4338ca' },
@@ -1405,13 +1431,17 @@
                     { from:'madamlan', to:'sontra', mode:'bus', color:'#0ea5e9' },
                     { from:'sontra', to:'tower', mode:'bus', color:'#0ea5e9' },
                     { from:'tower', to:'dad', mode:'bus', color:'#0ea5e9' },
-                    { from:'dad', to:'icn', mode:'flight', color:'#64748b', label:'KE460 귀국' }
+                    { from:'dad', to:'icn', mode:'flight', color:'#64748b', label:'KE460 귀국' },
+                    { from:'icn', to:'pyeongchang', mode:'bus', color:'#0f766e' },
+                    { from:'pyeongchang', to:'school', mode:'bus', color:'#0f766e' }
                 ]
             },
             day1: {
-                zoom: ['dad','hotel'],
-                maxZoom: 12,
+                zoom: ['school','deokpyeong','icn','dad','hotel'],
+                maxZoom: 8,
                 legs: [
+                    { from:'school', to:'deokpyeong', mode:'bus', color:'#0f766e' },
+                    { from:'deokpyeong', to:'icn', mode:'bus', color:'#0f766e' },
                     { from:'icn', to:'dad', mode:'flight', color:'#004098', label:'KE459 출국' },
                     { from:'dad', to:'hotel', mode:'bus', color:'#004098' }
                 ]
@@ -1453,10 +1483,12 @@
                 ]
             },
             day5: {
-                zoom: ['icn','dad'],
-                maxZoom: 5,
+                zoom: ['icn','pyeongchang','school'],
+                maxZoom: 9,
                 legs: [
-                    { from:'dad', to:'icn', mode:'flight', color:'#64748b', label:'KE460 귀국' }
+                    { from:'dad', to:'icn', mode:'flight', color:'#64748b', label:'KE460 귀국' },
+                    { from:'icn', to:'pyeongchang', mode:'bus', color:'#0f766e' },
+                    { from:'pyeongchang', to:'school', mode:'bus', color:'#0f766e' }
                 ]
             }
         };
